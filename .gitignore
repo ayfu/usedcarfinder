@@ -4,6 +4,7 @@ notebooks/
 *.ipynb
 *.ppt
 *.pptx
+*.pyc
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

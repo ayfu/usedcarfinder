@@ -2,7 +2,7 @@
 
 __file__
 
-    cglst.py
+    cglst_compact.py
 
 __description__
 
