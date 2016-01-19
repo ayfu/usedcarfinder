@@ -78,8 +78,10 @@ class ScrapeCglst():
             dat = soup2.findAll('p', attrs={'class':"attrgroup"})
 
             # Take care of price, time, and date first
+            # try statement for one anomolous page for Mazda 3
             try:
-                time = soup2.find('time', attrs={'datetime': re.compile('.*')}).get_text()
+                time = soup2.find('time',
+                                attrs={'datetime': re.compile('.*')}).get_text()
             except:
                 continue
             time = time.split(' ')
@@ -97,7 +99,7 @@ class ScrapeCglst():
             # Fill in first features (from webpage or from title)
             if dat[0].span.get_text() != None:
                 title = soup2.title.get_text()
-                #year and extra is from title
+                # year is from title
                 year = dat[0].span.get_text()
                 year = re.search('([^a-zA-Z0-9\.*_]\b[12][09][0-9][0-9]'+\
                                  '[^a-zA-Z0-9~_\-\.]|'+\
@@ -108,7 +110,7 @@ class ScrapeCglst():
                 else:
                     data['year'] += [np.nan]
 
-                # Different Cars
+                # Different Cars - scrape 'extra' feature from title
 
                 # CIVIC
                 if self.query == 'honda+civic':
@@ -238,7 +240,8 @@ class ScrapeCglst():
                     ti_hat = re.search('\s+[tT][iI][tT][aA][nN][iI][uU][mM]'+\
                                        '\s+[hH][aA][tT][cC][hH]', title)
                     st = re.search('\s+[sS][tT]\s*', title)
-                    el = re.search('\s+[eE][lL][eE][cC][tT][rR][iI][cC]\s*', title)
+                    el = re.search('\s+[eE][lL][eE][cC][tT][rR][iI][cC]\s*',
+                                   title)
                     rs = re.search('\s+[rR][sS]\s*', title)
                     if rs:
                         data['extra'] += ['rs']
@@ -383,7 +386,7 @@ class ScrapeCglst():
             for ns in notseen:
                 data[ns] += [np.nan]
 
-            # Reset check variables to 0
+            # Reset variables that check if car type can be extracted from title
             hatch = 0
             sedan = 0
             coupe = 0
@@ -403,8 +406,8 @@ class ScrapeCglst():
         """
         Takes in: starting craigslist url for cars (Specific for honda civic)
 
-        Returns: a dataframe from all the page listing of Honda Civics on craigslist
-                (for given parameters)
+        Returns: a dataframe from all the page listing of Honda Civics on
+                 craigslist (for given parameters)
         """
         df_dict = {} #dictionary of dataframes
         i = 1
@@ -444,7 +447,7 @@ class ScrapeCglst():
                 self.df[col] = pd.to_datetime(self.df[col])
                 self.df[col] = self.df[col].dt.time
             elif col == 'odometer':
-                #There is no null right now, but we can avg over cars with same year
+                #No null right now, but we can avg over cars with same year
                 #Future reference
                 self.df.loc[pd.isnull(self.df[col]), col] = 0
 
