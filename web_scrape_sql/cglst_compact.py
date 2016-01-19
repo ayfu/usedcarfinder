@@ -65,7 +65,7 @@ class ScrapeCglst():
                 'title_stat': [],
                 'drive': [],
                 'type': [],
-                'paint color': [],
+                'color': [],
                 'condition': [],
                 'time':[],
                 'date':[]
@@ -369,9 +369,9 @@ class ScrapeCglst():
                         data['drive'] += ['4wd']
                     seen += ['drive']
 
-                elif feat[0] == 'paint color':
-                    data['paint color'] += [feat[1]]
-                    seen += ['paint color']
+                elif feat[0] == 'color':
+                    data['color'] += [feat[1]]
+                    seen += ['color']
 
                 elif feat[0] == 'condition':
                     data['condition'] += [feat[1]]
@@ -396,14 +396,6 @@ class ScrapeCglst():
             self.nextlink = None
 
         #Make dataframe
-        '''
-        for key in data.keys():
-            print key, len(data[key])
-
-        print data['type']
-        for i in range(len(data['type'])):
-            print data['extra'][i], data['price'][i], data['year'][i], data['type'][i], data['time'][i], data['date'][i]
-        '''
         df = pd.DataFrame(data)
         return df
 
@@ -442,7 +434,7 @@ class ScrapeCglst():
                 self.df.loc[pd.isnull(self.df[col]), col] = 'auto'
             elif col == 'type':
                 self.df.loc[pd.isnull(self.df[col]), col] = 'unknown'
-            elif col == 'paint color':
+            elif col == 'color':
                 self.df.loc[pd.isnull(self.df[col]), col] = 'unknown'
             elif col == 'condition':
                 self.df.loc[pd.isnull(self.df[col]), col] = 'unknown'
