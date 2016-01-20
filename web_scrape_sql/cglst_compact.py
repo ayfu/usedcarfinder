@@ -84,9 +84,18 @@ class ScrapeCglst():
                                 attrs={'datetime': re.compile('.*')}).get_text()
             except:
                 continue
+            def time_convert(x):
+                atimes = x.split(':')
+                return (3600*int(atimes[0])+60*int(atimes[1]))+int(atimes[2])
+
             time = time.split(' ')
             data['date'] += [time[0]]
-            data['time'] += [time[1]]
+            # Convert time string into datetime and then back to formatted time
+            time_temp = pd.DataFrame({'time':[time[1]]})
+            time_temp = pd.to_datetime(time_temp['time'])
+            time[1] = time_temp.dt.time.astype(str)[0]
+            data['time'] += [time_convert(time[1])]
+
             price = car.find('span', attrs={'class': 'price'}).get_text()
             data['price'].append(float(price.split('$')[-1]))
 
@@ -372,7 +381,7 @@ class ScrapeCglst():
                         data['drive'] += ['4wd']
                     seen += ['drive']
 
-                elif feat[0] == 'color':
+                elif feat[0] == 'paint color':
                     data['color'] += [feat[1]]
                     seen += ['color']
 
@@ -443,9 +452,9 @@ class ScrapeCglst():
                 self.df.loc[pd.isnull(self.df[col]), col] = 'unknown'
             elif col == 'date':
                 self.df[col] = pd.to_datetime(self.df.date, format = '%Y-%m-%d')
-            elif col == 'time':
-                self.df[col] = pd.to_datetime(self.df[col])
-                self.df[col] = self.df[col].dt.time
+            #elif col == 'time':
+            #    self.df[col] = pd.to_datetime(self.df[col])
+            #    self.df[col] = self.df[col].dt.time
             elif col == 'odometer':
                 #No null right now, but we can avg over cars with same year
                 #Future reference
