@@ -1,4 +1,16 @@
+'''
 
+__file__
+
+    models.py
+
+__description__
+
+    This file provides utilities to run models for Random Forest Regressor,
+    Stochastic Gradient Boosting Regressor, Lasso Regression, and Ridge
+    Regresion
+
+'''
 
 
 import sys
@@ -17,6 +29,48 @@ from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.metrics import make_scorer, mean_squared_error
 
 from encode import *
+
+
+'''
+Parameters for different Models
+'''
+# Random Forest
+params_rf = {'n_estimators': 200,
+                  'criterion': "mse",
+                  'max_features': "auto",
+                  'max_depth': None,
+                  'min_samples_split': 2,
+                  'min_samples_leaf': 2,
+                  'min_weight_fraction_leaf': 0,
+                  'oob_score': True,
+                  #'max_leaf_notes': None
+                  'verbose': 1
+                  }
+# Gradient Boosting
+params_gb = {'loss': 'ls',
+                   'learning_rate': 0.02,
+                   'n_estimators': 100,
+                   'max_depth': 5,
+                   'min_samples_split': 5,
+                   'min_samples_leaf': 3,
+                   'subsample': 0.7
+                  }
+# Linear Regression
+params_lin = {'fit_intercept': True,
+              'normalize': False,
+              'copy_X': True,
+              'n_jobs': 1
+              }
+# Lasso Regression
+params_lasso = {'alpha': 10,
+                'fit_intercept': True,
+                'normalize': False,
+                'copy_X': True}
+# Ridge Regression
+params_ridge = {'alpha': 0.4,
+                'fit_intercept': True,
+                'normalize': False,
+                'copy_X': True}
 
 
 class Model():
@@ -219,3 +273,28 @@ class Model():
         ax.tick_params(labelsize =20)
 
         ax.text(2500, 20000, 'GOOD DEAL REGION', fontsize=26)
+
+
+def main():
+    # Random Forest
+    params_rf = {'n_estimators': 200,
+                 'criterion': "mse",
+                 'max_features': "auto",
+                 'max_depth': None,
+                 'min_samples_split': 2,
+                 'min_samples_leaf': 2,
+                 'min_weight_fraction_leaf': 0,
+                 'oob_score': True,
+                 #'max_leaf_notes': None
+                 'verbose': 1
+                  }
+
+    c = Encode(site = 'craigslist')
+    c.label_encode(columns = c.df.columns, TRANSFORM_CUTOFF = 0)
+    df = c.df
+
+    mdl = Model(df, model = 'rf', params = params_rf, test_size = 0.3)
+    mdl.kfold_cv(n_folds = 6)
+
+if __name__ == "__main__":
+    main()

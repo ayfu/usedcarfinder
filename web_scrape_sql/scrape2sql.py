@@ -101,7 +101,7 @@ def main():
             except:
                 print '%s already exists' % (tablename)
         #'''
-        """
+        #"""
         # Autotrader
         for car in all_cars2.keys():
             # Format the name of the table
@@ -135,6 +135,6 @@ def main():
                 print
             except:
                 print '%s already exists' % (tablename)
-        """
+        #"""
 if __name__ == "__main__":
     main()
