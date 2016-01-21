@@ -16,6 +16,7 @@ __description__
 import sys
 import os
 from collections import defaultdict
+import pickle
 
 import pandas as pd
 import numpy as np
@@ -113,6 +114,32 @@ class Model():
         self.X_test = X_test
         self.y_train = y_train
         self.y_test = y_test
+
+    def train(self, filename = 'model.pickle' ):
+        '''
+        Takes in: Nothing
+
+        Trains model on all data of interest, dumps the model, and
+        saves it as a pickle file
+        '''
+        X = self.df.as_matrix(self.df.columns[:-1])
+        y = self.df.as_matrix(['price'])[:,0]
+
+        # Set up model
+        if self.model == 'gb':
+            self.mdl = GradientBoostingRegressor(**self.params)
+        elif self.model == 'rf':
+            self.mdl = RandomForestRegressor(**self.params)
+        elif self.model == 'lasso':
+            self.mdl = Lasso(**self.params)
+        elif self.model == 'ridge':
+            self.mdl = Ridge(**self.params)
+
+        self.mdl.fit(X, y)
+
+        # Pickle the model and dump it as a pickle file
+        with open(filename,'wb') as f:
+            pickle.dump(self.mdl, f)
 
     def kfold_cv(self, n_folds = 3):
         """
