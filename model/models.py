@@ -125,13 +125,13 @@ class Model():
 
         # Set up model
         if self.model == 'gb':
-            mdl = GradientBoostingRegressor(**self.params)
+            self.mdl = GradientBoostingRegressor(**self.params)
         elif self.model == 'rf':
-            mdl = RandomForestRegressor(**self.params)
+            self.mdl = RandomForestRegressor(**self.params)
         elif self.model == 'lasso':
-            mdl = Lasso(**self.params)
+            self.mdl = Lasso(**self.params)
         elif self.model == 'ridge':
-            mdl = Ridge(**self.params)
+            self.mdl = Ridge(**self.params)
 
 
         # Run through CV
@@ -140,8 +140,8 @@ class Model():
                         'real': []}
 
         for train, test in cv:
-            mdl.fit(self.X_train[train], self.y_train[train])
-            pred = mdl.predict(self.X_train[test])
+            self.mdl.fit(self.X_train[train], self.y_train[train])
+            pred = self.mdl.predict(self.X_train[test])
             error = mean_squared_error(pred, self.y_train[test])**0.5
             self.results['pred'] += list(pred)
             self.results['real'] += list(self.y_train[test])
@@ -152,28 +152,28 @@ class Model():
         # Store results of model
         # Work on avging results later
         if self.model == 'lasso' or self.model == 'ridge':
-            coef = mdl.coef_
+            coef = self.mdl.coef_
             self.coef_imp = pd.DataFrame({'feature': self.df.columns[:-1],
                                           'coefficient': coef})
             self.coef_imp = self.coef_imp.sort('coefficient', ascending = False)
             self.coef_imp = self.coef_imp.reset_index().drop('index', axis = 1)
-            self.intercept = mdl.intercept_
+            self.intercept = self.mdl.intercept_
 
         elif self.model == 'gb':
-            feat = mdl.feature_importances_
+            feat = self.mdl.feature_importances_
             self.feat_imp = pd.DataFrame({'feature': self.df.columns[:-1],
                                           'importance': feat})
             self.feat_imp = self.feat_imp.sort('importance', ascending = False)
             self.feat_imp = self.feat_imp.reset_index().drop('index', axis = 1)
-            self.estimators_ = mdl.estimators_
+            self.estimators_ = self.mdl.estimators_
         else:
-            feat = mdl.feature_importances_
+            feat = self.mdl.feature_importances_
             self.feat_imp = pd.DataFrame({'feature': self.df.columns[:-1],
                                           'importance': feat})
             self.feat_imp = self.feat_imp.sort('importance', ascending = False)
             self.feat_imp = self.feat_imp.reset_index().drop('index', axis = 1)
-            self.oob_prediction_ = mdl.oob_prediction_
-            self.estimators_ = mdl.estimators_
+            self.oob_prediction_ = self.mdl.oob_prediction_
+            self.estimators_ = self.mdl.estimators_
 
 
     def plot_results(self):
@@ -211,43 +211,43 @@ class Model():
         """
         # Set up model
         if self.model == 'gb':
-            mdl = GradientBoostingRegressor(**self.params)
+            self.mdl = GradientBoostingRegressor(**self.params)
         elif self.model == 'rf':
-            mdl = RandomForestRegressor(**self.params)
+            self.mdl = RandomForestRegressor(**self.params)
         elif self.model == 'lasso':
-            mdl = Lasso(**self.params)
+            self.mdl = Lasso(**self.params)
         elif self.model == 'ridge':
-            mdl = Ridge(**self.params)
+            self.mdl = Ridge(**self.params)
 
-        mdl.fit(self.X_train, self.y_train)
-        self.preds = mdl.predict(self.X_test)
+        self.mdl.fit(self.X_train, self.y_train)
+        self.preds = self.mdl.predict(self.X_test)
         self.rmse = mean_squared_error(self.preds, self.y_test)**0.5
         print 'RMSE score:', self.rmse
 
         # Work on avging results later
         if self.model == 'lasso' or self.model == 'ridge':
-            coef = self.mdl.coef_
+            coef = self.self.mdl.coef_
             self.coef_imp = pd.DataFrame({'feature': self.df.columns[:-1],
                                           'coefficient': coef})
             self.coef_imp = self.coef_imp.sort('coefficient', ascending = False)
             self.coef_imp = self.coef_imp.reset_index().drop('index', axis = 1)
-            self.intercept = self.mdl.intercept_
+            self.intercept = self.self.mdl.intercept_
 
         elif self.model == 'gbr':
-            feat = mdl.feature_importances_
+            feat = self.mdl.feature_importances_
             self.feat_imp = pd.DataFrame({'feature': self.df.columns[:-1],
                                           'importance': feat})
             self.feat_imp = self.feat_imp.sort('importance', ascending = False)
             self.feat_imp = self.feat_imp.reset_index().drop('index', axis = 1)
-            self.estimators_ = mdl.estimators_
+            self.estimators_ = self.mdl.estimators_
         else:
-            feat = mdl.feature_importances_
+            feat = self.mdl.feature_importances_
             self.feat_imp = pd.DataFrame({'feature': self.df.columns[:-1],
                                           'importance': feat})
             self.feat_imp = self.feat_imp.sort('importance', ascending = False)
             self.feat_imp = self.feat_imp.reset_index().drop('index', axis = 1)
-            self.oob_prediction_ = mdl.oob_prediction_
-            self.estimators_ = mdl.estimators_
+            self.oob_prediction_ = self.mdl.oob_prediction_
+            self.estimators_ = self.mdl.estimators_
 
         plt.style.use('ggplot')
         fig, ax = plt.subplots(figsize = (12,10))
@@ -293,8 +293,8 @@ def main():
     c.label_encode(columns = c.df.columns, TRANSFORM_CUTOFF = 0)
     df = c.df
 
-    mdl = Model(df, model = 'rf', params = params_rf, test_size = 0.3)
-    mdl.kfold_cv(n_folds = 6)
+    model = Model(df, model = 'rf', params = params_rf, test_size = 0.3)
+    model.kfold_cv(n_folds = 6)
 
 if __name__ == "__main__":
     main()
