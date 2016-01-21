@@ -188,13 +188,7 @@ class Encode():
         Returns: Dataframe that one hot encodes the columns of interest
         '''
 
-        # DEPRECATED pd.get_dummies(df[col]) is so much better
-        '''
-        self.label_encode(columns = self.df.columns,
-                         TRANSFORM_CUTOFF = TRANSFORM_CUTOFF)
-        '''
-
-        # Convert date column
+        # Convert date column to continuous variable (reference is min date)
         if self.site == 'craigslist':
             self.df['date'] = (self.df['date'] - self.df['date'].min())
             self.df['date'] = self.df['date'].astype(str)
@@ -207,20 +201,9 @@ class Encode():
         # Do linear regression prediction later for improved feature
         self.df = self.df[pd.notnull(self.df['year'])]
 
+        # Renaming columns so we don't have multiple columns with same name
+        # ie. fuel_unknown and condition_unknown
         for col in columns:
-            # DEPRECATED pd.get_dummies(df[col]) is so much better
-            '''
-            onehottemp = self.df[col].values
-            lbl = OneHotEncoder()
-            lbl.fit(np.resize(np.array(onehottemp),
-                             (len(onehottemp), 1)))
-            onehottemp = lbl.transform(np.resize(np.array(onehottemp),
-                                      (len(onehottemp), 1))).toarray()
-            for i in range(onehottemp.shape[1]):
-                self.df[col + '_' + str(i)] = onehottemp[:,i]
-
-            print lbl.get_params()
-            '''
             onehottemp = pd.get_dummies(self.df[col])
             if sum(onehottemp.columns.isin(['unknown'])) > 0:
                 self.df.rename(columns={'unknown':col+'_unknown'},
@@ -235,7 +218,7 @@ class Encode():
                 self.df.rename(columns={'electric':col+'_electric'},
                                inplace=True)
             self.df = pd.concat([self.df,onehottemp], axis = 1)
-            # Reformat column
+            # Reformat column no need that column anymore
             self.df = self.df.drop([col], axis = 1)
 
         # Place price column at the end
