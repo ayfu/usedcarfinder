@@ -303,6 +303,9 @@ class Model():
 
 
 def main():
+    '''
+    Train model and pickle dump it
+    '''
     # Random Forest
     params_rf = {'n_estimators': 200,
                  'criterion': "mse",
@@ -321,7 +324,7 @@ def main():
     df = c.df
 
     model = Model(df, model = 'rf', params = params_rf, test_size = 0.3)
-    model.kfold_cv(n_folds = 6)
+    model.train(filename = 'cg_model.pickle')
 
 if __name__ == "__main__":
     main()
