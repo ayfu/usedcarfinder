@@ -171,17 +171,17 @@ def carcheck():
         sedan = 0
         coupe = 0
 
-        # Default car: civic
-        query = 'civic'
 
         title = soup.title.get_text()
+        print title
 
+        # Determine car model
         query = re.search('[cC][iI][vV][iI][cC]|' +\
                           '[cC][oO][rR][oO][lL][lL][aA]|' +\
                           '[fF][oO][cC][uU][sS]|' +\
                           '[cC][rR][uU][zZ][eE]|' +\
                           '[eE][lL][aA][nN][tT][rR][aA]|' +\
-                          '[fF][oO][rR][tT][eE]' +\
+                          '[fF][oO][rR][tT][eE]|' +\
                           '[mM][aA][zZ][dD][aA]', title).group(0)
 
         # Making sure we get SOMETHING
@@ -641,7 +641,9 @@ def carcheck():
         deal = pred[0] - price
         deal = round(deal, 2)
 
-        if deal > 0:
+        if price == 0:
+            suggestion = 'NO LISTED PRICE! RUN AWAY FROM THIS SNEAKY PERSON'
+        elif deal > 0:
             suggestion = 'GOOD DEAL'
         else:
             suggestion = 'BAD DEAL'
