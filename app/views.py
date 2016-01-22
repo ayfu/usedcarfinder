@@ -157,8 +157,13 @@ def carcheck():
 
 
 
-        price = soup.find('span', attrs={'class': 'price'}).get_text()
-        data['price'].append(float(price.split('$')[-1]))
+        price = soup.find('span', attrs={'class': 'price'})
+        if price == None:
+            # FILTER OUT LATER BECAUSE OF RIDICULOUSNESS
+            data['price'] = 0
+        else:
+            price = price.get_text()
+            data['price'].append(float(price.split('$')[-1]))
 
 
         # Checks if title contains car type (ie. hatchback)
@@ -534,6 +539,9 @@ def carcheck():
             if col == 'cylinders':
                 df.loc[pd.isnull(df[col]), col] = 4
                 testdf.loc[pd.isnull(testdf[col]), col] = 4
+            elif col == 'odometer':
+                df.loc[pd.isnull(df[col]), col] = 20000
+                testdf.loc[pd.isnull(testdf[col]), col] = 20000
             elif col == 'extra':
                 df.loc[pd.isnull(df[col]), col] = 'unknown'
                 testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
@@ -632,11 +640,13 @@ def carcheck():
         # Calculate if this is a deal
         deal = pred[0] - price
         deal = round(deal, 2)
-        deal = str(deal) + ' Dollars'
+
         if deal > 0:
             suggestion = 'GOOD DEAL'
         else:
             suggestion = 'BAD DEAL'
+
+        deal = str(deal) + ' Dollars'
 
 
 

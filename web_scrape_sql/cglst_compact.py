@@ -96,8 +96,13 @@ class ScrapeCglst():
             time[1] = time_temp.dt.time.astype(str)[0]
             data['time'] += [time_convert(time[1])]
 
-            price = car.find('span', attrs={'class': 'price'}).get_text()
-            data['price'].append(float(price.split('$')[-1]))
+            price = car.find('span', attrs={'class': 'price'})
+            if price == None:
+                # FILTER OUT LATER BECAUSE OF RIDICULOUSNESS
+                data['price'] = 0
+            else:
+                price = price.get_text()
+                data['price'].append(float(price.split('$')[-1]))
 
 
             # Checks if title contains car type (ie. hatchback)
