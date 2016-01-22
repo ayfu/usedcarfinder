@@ -473,15 +473,15 @@ def carcheck():
         for ns in notseen:
             data[ns] += [np.nan]
 
-        #Make dataframe
+        # Make dataframe
         testdf = pd.DataFrame(data)
-        df_temp = testdf.copy()
+        # testdf will be encoded, make a non-encoded version
+        df_temp = testdf.copy() # Make a copy for reading off later
 
 
         #####################
         # GRAB DATA FOR LABELENCODING
         ######################
-
 
 
         # Connect with MySQL and grab data into one dataframe
@@ -610,6 +610,10 @@ def carcheck():
         print
         print df_temp
 
+        #####################
+        # BRING IN TRAINED MODEL
+        ######################
+
         # Use pickle to load the model trained earlier
         # Model is site dependent
         if site == 'craigslist':
@@ -646,6 +650,7 @@ def carcheck():
         f.close()
         show(p)
         """
+        print suggestion
         html = render_template("carcheck.html", deal = deal,
                                 suggestion = suggestion,
                                 model = df_temp['model'][0],
