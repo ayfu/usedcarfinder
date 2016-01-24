@@ -129,7 +129,10 @@ def carcheck():
                 'date':[]
                }
 
-        html = requests.get(url)
+        try:
+            html = requests.get(url)
+        except:
+            return render_template("invalid.html")
         soup = BeautifulSoup(html.text, 'lxml')
         if soup:
             dat = soup.findAll('p', attrs={'class':"attrgroup"})
@@ -188,7 +191,7 @@ def carcheck():
 
         # Making sure we get SOMETHING
         if query == None:
-            query = 'civic'
+            return render_template("invalid.html")
         query = query.lower()
 
         # Fill in first features (from webpage or from title)
