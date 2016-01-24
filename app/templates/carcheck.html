@@ -44,7 +44,6 @@
               <nav>
                 <ul class="nav masthead-nav">
                   <li><a href="{{ url_for('carcheck') }}">Check Car</a></li>
-                  <li><a href="{{ url_for('index') }}">Recommend Cars</a></li>
                   <li class="active"><a href="{{ url_for('index') }}"><i class="fa fa-home fa-lg"></i></a></li>
 
                   <li><a href="https://github.com/ayfu/">
@@ -71,7 +70,7 @@
 
             <form align="center" action="/carcheck" method="POST">
                 <!-- width style also taken care of in cover.css file for the "input[type=text]" section" -->
-               <input type="text" name="urlcall" style="width: 70%;" value="http://sfbay.craigslist.org/pen/ctd/5413262011.html">
+               <input type="text" name="urlcall" style="width: 70%;" value={{url}}>
                <p></p>
                <input type="submit" name="my-form" >
            </form>

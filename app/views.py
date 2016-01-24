@@ -158,9 +158,11 @@ def carcheck():
 
 
         price = soup.find('span', attrs={'class': 'price'})
+        price_check = 0 # if price_check = 1, means null value
         if price == None:
             # FILTER OUT LATER BECAUSE OF RIDICULOUSNESS
             data['price'] = 0
+            price_check = 1
         else:
             price = price.get_text()
             data['price'].append(float(price.split('$')[-1]))
@@ -193,12 +195,18 @@ def carcheck():
         if dat[0].span.get_text() != None:
             # year is from title
             year = dat[0].span.get_text()
-            year = re.search('([^a-zA-Z0-9\.*_]\b[12][09][0-9][0-9]'+\
+            year1 = re.search('([^a-zA-Z0-9:\.*_]\s*[12][09][0-9][0-9]'+\
+                             '[^a-zA-Z0-9~_\-\.]|'+\
+                             '^[12][09][0-9][0-9][^a-zA-Z0-9~_\-\.])',
+                             year)
+            year2 = re.search('([^a-zA-Z0-9:\.*_]\s*[12][09][0-9][0-9]'+\
                              '[^a-zA-Z0-9~_\-\.]|'+\
                              '^[12][09][0-9][0-9][^a-zA-Z0-9~_\-\.])',
                              title)
-            if year:
-                data['year'] += [int(year.group(0))]
+            if year1:
+                data['year'] += [int(year1.group(0))]
+            elif year2:
+                data['year'] += [int(year2.group(0))]
             else:
                 data['year'] += [np.nan]
 
@@ -641,7 +649,7 @@ def carcheck():
         deal = pred[0] - price
         deal = round(deal, 2)
 
-        if price == 0:
+        if price_check == 1:
             suggestion = 'NO LISTED PRICE! RUN AWAY FROM THIS SNEAKY PERSON'
         elif deal > 0:
             suggestion = 'GOOD DEAL'
@@ -664,6 +672,7 @@ def carcheck():
         """
         print suggestion
         html = render_template("carcheck.html", deal = deal,
+                                url = url,
                                 suggestion = suggestion,
                                 model = df_temp['model'][0],
                                 year = df_temp['year'][0],
@@ -672,7 +681,8 @@ def carcheck():
 
     else:
         # It will be a get request instead
-        html = render_template("carcheck.html")
+        url = "http://sfbay.craigslist.org/pen/ctd/5413262011.html"
+        html = render_template("carcheck.html", url = url)
 
     return html
 
