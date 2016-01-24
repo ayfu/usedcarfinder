@@ -54,7 +54,8 @@ class ScrapeCglst():
         soup = BeautifulSoup(html.text, 'lxml')
         cars = soup.findAll('p', attrs={'class': 'row'})
 
-        data = {'model': [],
+        data = {'url': [],
+                'model': [],
                 'price': [],
                 'year': [],
                 'extra': [],
@@ -72,13 +73,14 @@ class ScrapeCglst():
                }
 
         for car in cars:
-            url2 = "http://sfbay.craigslist.org/" + str(car.a['href'])
+            url2 = "http://sfbay.craigslist.org" + str(car.a['href'])
             html2 = requests.get(url2)
             soup2 = BeautifulSoup(html2.text, 'lxml')
             dat = soup2.findAll('p', attrs={'class':"attrgroup"})
 
-            # Take care of price, time, and date first
+            # Take care of url, price, time, and date first
             # try statement for one anomolous page for Mazda 3
+
             try:
                 time = soup2.find('time',
                                 attrs={'datetime': re.compile('.*')}).get_text()
@@ -87,7 +89,6 @@ class ScrapeCglst():
             def time_convert(x):
                 atimes = x.split(':')
                 return (3600*int(atimes[0])+60*int(atimes[1]))+int(atimes[2])
-
             time = time.split(' ')
             data['date'] += [time[0]]
             # Convert time string into datetime and then back to formatted time
@@ -95,6 +96,8 @@ class ScrapeCglst():
             time_temp = pd.to_datetime(time_temp['time'])
             time[1] = time_temp.dt.time.astype(str)[0]
             data['time'] += [time_convert(time[1])]
+            # add urls (after try except statement is important)
+            data['url'] += [url2]
 
             price = car.find('span', attrs={'class': 'price'})
             if price == None:
@@ -115,12 +118,18 @@ class ScrapeCglst():
                 title = soup2.title.get_text()
                 # year is from title
                 year = dat[0].span.get_text()
-                year = re.search('([^a-zA-Z0-9\.*_]\b[12][09][0-9][0-9]'+\
-                                 '[^a-zA-Z0-9~_\-\.]|'+\
-                                 '^[12][09][0-9][0-9][^a-zA-Z0-9~_\-\.])',
-                                 title)
-                if year:
-                    data['year'] += [int(year.group(0))]
+                year1 = re.search('([^a-zA-Z0-9:\.*_]\s*[12][09][0-9][0-9]'+\
+                                  '[^a-zA-Z0-9~_\-\.]|'+\
+                                  '^[12][09][0-9][0-9][^a-zA-Z0-9~_\-\.])',
+                                  year)
+                year2 = re.search('([^a-zA-Z0-9:\.*_]\s*[12][09][0-9][0-9]'+\
+                                  '[^a-zA-Z0-9~_\-\.]|'+\
+                                  '^[12][09][0-9][0-9][^a-zA-Z0-9~_\-\.])',
+                                  title)
+                if year1:
+                    data['year'] += [int(year1.group(0))]
+                elif year2:
+                    data['year'] += [int(year2.group(0))]
                 else:
                     data['year'] += [np.nan]
 
@@ -303,7 +312,7 @@ class ScrapeCglst():
                 data['extra'] += [np.nan]
 
             # Filling in other features
-            seen = ['year','price', 'date', 'time','extra', 'model']
+            seen = ['url','year','price', 'date', 'time','extra', 'model']
 
             for d in dat[1].findAll('span'):
                 feat = d.get_text().split(': ')

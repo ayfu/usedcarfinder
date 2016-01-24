@@ -64,9 +64,10 @@ def main():
     connect = dbConnect(host = 'localhost', user = 'root',
                   passwd = 'default', db = 'find_car')
     with connect:
-        #'''
+        '''
         # Craigslist
         for car in all_cars:
+            print car
             # Format the name of the table
             tablename = car.lower().split('+')
             tablename = '_'.join(tablename)+'_cglst'
@@ -80,7 +81,7 @@ def main():
             for i in range(len(df.columns)):
                 if df.columns[i] in ['condition', 'drive', 'extra', 'fuel',
                                      'model', 'color', 'title_stat',
-                                     'transmission', 'type']:
+                                     'transmission', 'type','url']:
                     dtype[df.columns[i]] = 'TEXT'
                 elif df.columns[i] == 'date':
                     dtype[df.columns[i]] = 'DATE'
@@ -100,7 +101,7 @@ def main():
                 print
             except:
                 print '%s already exists' % (tablename)
-        #'''
+        '''
         #"""
         # Autotrader
         for car in all_cars2.keys():
@@ -119,6 +120,8 @@ def main():
                 if df.columns[i] in ['color', 'condition', 'extra', 'model',
                                      'type']:
                     dtype[df.columns[i]] = 'TEXT'
+                elif df.columns[i] in ['url']
+                    dtype[df.columns[i]] = 'MEDIUMTEXT'
                 elif df.columns[i] in ['odometer', 'year']:
                     dtype[df.columns[i]] = 'INTEGER'
                 else:
