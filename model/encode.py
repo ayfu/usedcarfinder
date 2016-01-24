@@ -164,10 +164,12 @@ class Encode():
                 return dates[0]
             self.df['date'] = (self.df['date'].apply(date_convert)).astype(int)
 
+        self.le = {col: [] for col in columns}
         for col in columns:
             if type(self.df[col].unique()[1]) == str:
                 le = PruneLabelEncoder()
                 le.fit(self.df[col], TRANSFORM_CUTOFF)
+                self.le[col] += [le]
                 self.df[col] = le.transform(self.df[col])
 
         # Drop null values in year
@@ -175,6 +177,9 @@ class Encode():
         self.df = self.df[pd.notnull(self.df['year'])]
 
         # Place price column at the end
+        url = self.df['url'].copy()
+        self.df = self.df.drop(['url'], axis = 1)
+        self.df['url'] = url
         price = self.df['price'].copy()
         self.df = self.df.drop(['price'], axis = 1)
         self.df['price'] = price
@@ -221,7 +226,10 @@ class Encode():
             # Reformat column no need that column anymore
             self.df = self.df.drop([col], axis = 1)
 
-        # Place price column at the end
+        # Place url and price column at the end
+        url = self.df['url'].copy()
+        self.df = self.df.drop(['url'], axis = 1)
+        self.df['url'] = url
         price = self.df['price'].copy()
         self.df = self.df.drop(['price'], axis = 1)
         self.df['price'] = price
