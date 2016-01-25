@@ -64,7 +64,7 @@ def main():
     connect = dbConnect(host = 'localhost', user = 'root',
                   passwd = 'default', db = 'find_car')
     with connect:
-        '''
+        #'''
         # Craigslist
         for car in all_cars:
             print car
@@ -101,7 +101,7 @@ def main():
                 print
             except:
                 print '%s already exists' % (tablename)
-        '''
+        #'''
         #"""
         # Autotrader
         for car in all_cars2.keys():
