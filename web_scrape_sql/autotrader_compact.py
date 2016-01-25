@@ -58,15 +58,19 @@ class ScrapeAutotrader():
                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; ' +\
                              'rv:43.0) Gecko/20100101 Firefox/43.0'
                }
-        data = {'model': [],
+        data = {'url': [],
+                'model': [],
                 'condition': [],
                 'year': [],
                 'extra': [],
                 'type': [],
                 'odometer': [],
                 'color': [],
+                'hwympg': [],
+                'citympg': [],
                 'price': [],
-                'distance': []
+                'fuel': [],
+                'cylinders': []
                 #'description': []
                }
 
@@ -75,11 +79,25 @@ class ScrapeAutotrader():
         cars = soup.findAll('div', {'class':re.compile('listing-isClickable')})
 
         for car in cars:
+            url = car.find('a', {'href':re.compile('cars-for-sale')})
+            if url != None:
+                url = url.attrs['href']
+                url = 'http://www.autotrader.com' + url
+                html = requests.get(url, headers = hdr)
+                soup2 = BeautifulSoup(html.text, "lxml")
 
-            title = car.find('span',{'class':'atcui-truncate ymm'})
-            if title:
+                # Add price, if no price - skip to next car
+                price = soup2.find('span', {'title': re.compile('[pP]rice')})
+                if price != None:
+                    price = price.get_text().lstrip('$').replace(',', '')
+                    data['price'] += [int(price)]
+                else:
+                    continue
 
-                # Check car type
+                # Add url
+                data['url'] += [url]
+
+                # Add model
                 if self.model == 'Civic':
                     data['model'] += ['civic']
                 elif self.model == 'Corol':
@@ -95,68 +113,116 @@ class ScrapeAutotrader():
                 elif self.model == 'Forte':
                     data['model'] += ['forte']
 
-
-                title = title.get_text().split(' ')
-                if title[0] == 'Certified':
-                    data['condition'] += ['certified']
-                elif title[0] == 'New':
-                    data['condition'] += ['new']
-                elif title[0] == 'Used':
-                    data['condition'] += ['used']
+                # Add highway mpg
+                hwympg = soup2.find('div', {'class': re.compile('mpg-hwy')})
+                if hwympg != None:
+                    hwympg = hwympg.span.get_text()
+                    try:
+                        data['hwympg'] += [int(hwympg)]
+                    except:
+                        data['hwympg'] += [np.nan]
                 else:
-                    data['condition'] += ['unknown']
+                    data['hwympg'] += [np.nan]
 
-                data['year'] += [int(title[1])]
+                # Add city mpg
+                citympg = soup2.find('div', {'class': re.compile('mpg-city')})
+                if citympg != None:
+                    citympg = citympg.span.get_text()
+                    try:
+                        data['citympg'] += [int(citympg)]
+                    except:
+                        data['citympg'] += [np.nan]
+                else:
+                    data['citympg'] += [np.nan]
 
+                # Add fuel
+                try:
+                    fuel = soup2.findAll('span', {'class': 'mpg'})[2]
+                except:
+                    fuel = None
+                if fuel != None:
+                    fuel = fuel.get_text()
+                    try:
+                        data['fuel'] += [fuel]
+                    except:
+                        data['fuel'] += ['unknown_fuel']
+                else:
+                    data['fuel'] += ['unknown_fuel']
 
-                trim = car.find('span',{'class':'trim'})
+                # Add year
+                title = soup2.title.get_text()
+                year = re.search('([^a-zA-Z0-9:\.*_]\s*[12][09][0-9][0-9]'+\
+                                  '[^a-zA-Z0-9~_\-\.]|'+\
+                                  '^[12][09][0-9][0-9][^a-zA-Z0-9~_\-\.])',
+                                  title)
+                if year != None:
+                    try:
+                        data['year'] += [int(year.group(0))]
+                    except:
+                        data['year'] += [np.nan]
+                else:
+                    data['year'] += [np.nan]
+
+                # Add condition
+                condition = soup2.find('h1',
+                                      {'class': 'listing-title atcui-block'})
+                if condition != None:
+                    try:
+                        condition = condition.get_text().split(' ')
+                        if condition[0] == 'Certified':
+                            data['condition'] += ['certified']
+                        elif condition[0] == 'New':
+                            data['condition'] += ['new']
+                        elif condition[0] == 'Used':
+                            data['condition'] += ['used']
+                        else:
+                            data['condition'] += ['unknown_condition']
+                    except:
+                        data['condition'] += ['unknown_condition']
+                else:
+                    data['condition'] += ['unknown_condition']
+
+                # Add color
+                color = soup2.find('span', {'class':"colorName"})
+                if re.search('[eE]xterior', color.get_text()):
+                    color = color.span.get_text()
+                    data['color'] += [color]
+                else:
+                    data['color'] += ['unknown_color']
+
+                # Add cylinders
+                cyl = re.search('[0-9] [cC]ylinder', soup2.get_text())
+                if cyl:
+                    cyl = cyl.group(0).split(' ')
+                    data['cylinders'] += [int(cyl[0])]
+                else:
+                    data['cylinders'] += [np.nan]
+
+                # Add extra and type
+                trim = soup2.find('span', {'class':'heading-trim'})
                 if trim:
                     trim = trim.get_text().split(' ')
-                    data['extra'] += [trim[0]]
-                    if len(trim) > 1:
-                        data['type'] += [trim[1]]
+                    data['extra'] += [trim[1]]
+                    if len(trim) > 2:
+                        data['type'] += [trim[2]]
                     else:
                         data['type'] += [np.nan]
                 else:
                     data['extra'] += [np.nan]
                     data['type'] += [np.nan]
 
-                mileage = car.find('span',{'class':'mileage'})
-                if mileage:
-                    mileage = mileage.get_text().split(' ')
-                    odo = mileage[0]
-                    odo = odo.replace(',', '')
-                    data['odometer'] += [int(odo)]
+                # Add odometer
+                odometer = soup2.find('span', {'class':"atcui-clear heading-mileage"})
+                if odometer != None:
+                    odometer = odometer.get_text().split(' ')
+                    odometer = odometer[0]
+                    odometer = odometer.replace(',', '')
+                    data['odometer'] += [int(odometer)]
                 else:
                     data['odometer'] += [np.nan]
 
-                color = car.find('span',{'class':'atcui-block'})
-                if color:
-                    data['color'] += [color.get_text()]
-                else:
-                    data['color'] += [np.nan]
-
-                price = car.find('h4',{'class':'primary-price'})
-                if price:
-                    price = price.get_text().lstrip('$').replace(',', '')
-                    data['price'] += [int(price)]
-                else:
-                    data['price'] += [np.nan]
-
-                dist = car.find('span',{'class':'distance-cont'})
-                if dist:
-                    dist = dist.get_text().split(' ')
-                    data['distance'] += [int(dist[0])]
-                else:
-                    data['distance'] += [np.nan]
-                """
-                desc = car.find('span',{'class':'atcui-truncate atcui-block'})
-                if desc:
-                    desc = desc.get_text()
-                    data['description'] += [desc]
-                else:
-                    data['description'] += [np.nan]
-                """
+            else:
+                continue
 
         # Find the link for the next page
         link = soup.find('a',

@@ -105,6 +105,7 @@ def main():
         #"""
         # Autotrader
         for car in all_cars2.keys():
+            print car
             # Format the name of the table
             tablename = car.lower().split('+')
             tablename = '_'.join(tablename)+'_autotrader'
@@ -118,11 +119,12 @@ def main():
             dtype = {}
             for i in range(len(df.columns)):
                 if df.columns[i] in ['color', 'condition', 'extra', 'model',
-                                     'type']:
+                                     'type', 'fuel']:
                     dtype[df.columns[i]] = 'TEXT'
                 elif df.columns[i] in ['url']
                     dtype[df.columns[i]] = 'MEDIUMTEXT'
-                elif df.columns[i] in ['odometer', 'year']:
+                elif df.columns[i] in ['odometer', 'year', 'citympg'
+                                       'hwympg', 'cylinders']:
                     dtype[df.columns[i]] = 'INTEGER'
                 else:
                     dtype[df.columns[i]] = 'REAL'
