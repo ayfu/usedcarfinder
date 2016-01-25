@@ -121,7 +121,7 @@ def main():
                 if df.columns[i] in ['color', 'condition', 'extra', 'model',
                                      'type', 'fuel']:
                     dtype[df.columns[i]] = 'TEXT'
-                elif df.columns[i] in ['url']
+                elif df.columns[i] in ['url']:
                     dtype[df.columns[i]] = 'MEDIUMTEXT'
                 elif df.columns[i] in ['odometer', 'year', 'citympg'
                                        'hwympg', 'cylinders']:
