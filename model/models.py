@@ -115,6 +115,7 @@ class Model():
                                                 test_size=self.test_size,
                                                 )
         '''
+        # subset out URL column and price column
         self.train = train[train.columns[:-2]]
         self.test = test[test.columns[:-2]]
         self.X_train = train.as_matrix(self.df.columns[:-2])

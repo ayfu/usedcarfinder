@@ -142,6 +142,16 @@ class Encode():
                 self.df = pd.concat(df_dict.values(), axis = 0)
                 self.df = self.df.reset_index().drop('index', axis = 1)
 
+                # For NULL values, average over non_null values for each model
+                # Replace NULL values with average value - not much std
+                for col in ['citympg', 'hwympg', 'cylinders']:
+                    for val in self.df['model'].unique():
+                        mean = np.mean(self.df.loc[(pd.notnull(self.df[col])) \
+                                       & (self.df['model'] == val), col])
+
+                        self.df.loc[(pd.isnull(self.df[col])) \
+                                    & (self.df['model'] == val),col] = mean
+
     def label_encode(self, columns, TRANSFORM_CUTOFF = 0):
         '''
         Takes in: columns of interest and a cutoff value for bucketing
