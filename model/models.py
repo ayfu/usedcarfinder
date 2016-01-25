@@ -125,9 +125,9 @@ class Model():
         self.url_train = train.as_matrix(['url'])[:,0]
         self.url_test = test.as_matrix(['url'])[:,0]
 
-    def train(self, filename = 'model.pickle' ):
+    def train_mdl(self, filename = 'model.pickle'):
         '''
-        Takes in: Nothing
+        Takes in: file name
 
         Trains model on all data of interest, dumps the model, and
         saves it as a pickle file
@@ -324,6 +324,7 @@ def main():
     Train model and pickle dump it
     '''
     # Random Forest
+    # Craigslist
     params_rf = {'n_estimators': 200,
                  'criterion': "mse",
                  'max_features': "auto",
@@ -340,11 +341,36 @@ def main():
     c.label_encode(columns = c.df.columns, TRANSFORM_CUTOFF = 0)
     df = c.df
 
-    model = Model(df, model = 'rf', params = params_rf, test_size = 0.3)
-    model.train(filename = 'cg_model.pickle')
+    model_c = Model(df, model = 'rf', params = params_rf, test_size = 0)
+    model_c.train_mdl(filename = 'cg_model.pickle')
+    print 'Done with craigslist training'
+
+    # Random Forest
+    # Autotrader
+    params_rf_a = {'n_estimators': 200,
+                   'criterion': "mse",
+                   'max_features': "auto",
+                   'max_depth': None,
+                   'min_samples_split': 2,
+                   'min_samples_leaf': 2,
+                   'min_weight_fraction_leaf': 0,
+                   'oob_score': True,
+                   #'max_leaf_notes': None
+                   'verbose': 1
+                  }
+
+    a = Encode(site = 'autotrader')
+    a.label_encode(columns = a.df.columns, TRANSFORM_CUTOFF = 0)
+    df_a = a.df
+
+    model_a = Model(df_a, model = 'rf', params = params_rf_a, test_size = 0)
+    model_a.train_mdl(filename = 'at_model.pickle')
+    print 'Done with autotrader training'
 
     '''
-    # VALIDATION TO SQL
+    # VALIDATION TO SQL - both craigslist and autotrader
+
+    # CRAIGSLIST FIRST
     # Random Forest
     params_rf = {'n_estimators': 200,
                   'criterion': "mse",
@@ -359,7 +385,8 @@ def main():
                   }
 
     c = Encode(site = 'craigslist')
-    columns = ['color','condition','drive','extra','fuel','model','title_stat','transmission','type']
+    columns = ['color','condition','drive','extra','fuel','model',
+               'title_stat','transmission','type']
     c.label_encode(columns = columns, TRANSFORM_CUTOFF = 0)
     df = c.df
 
@@ -378,11 +405,13 @@ def main():
             # Make sure dtypes fit for MySQL db
             dtype = {}
             for i in range(len(val.validate.columns)):
-                if val.validate.columns[i] in ['condition', 'drive', 'extra', 'fuel',
-                                     'model', 'color', 'title_stat',
-                                     'transmission', 'type','url']:
+                if val.validate.columns[i] in ['condition', 'drive', 'extra',
+                                               'fuel', 'model', 'color',
+                                               'title_stat', 'transmission',
+                                               'type','url']:
                     dtype[val.validate.columns[i]] = 'TEXT'
-                elif val.validate.columns[i] in ['date','cylinders', 'year', 'time']:
+                elif val.validate.columns[i] in ['date','cylinders', 'year',
+                                                 'time']:
                     dtype[val.validate.columns[i]] = 'INTEGER'
                 else:
                     dtype[val.validate.columns[i]] = 'REAL'
@@ -390,7 +419,60 @@ def main():
             # Send to MySQL database, if table exists, continue to next
             val.validate.to_sql(name = 'result_cg', con = connect.con,
                       flavor = 'mysql', dtype = dtype)
-    """
+
+    ############################################################################
+    # AUTOTRADER
+    ############################################################################
+    # Random Forest
+    params_rf = {'n_estimators': 200,
+                      'criterion': "mse",
+                      'max_features': "auto",
+                      'max_depth': None,
+                      'min_samples_split': 2,
+                      'min_samples_leaf': 2,
+                      'min_weight_fraction_leaf': 0,
+                      'oob_score': True,
+                      #'max_leaf_notes': None
+                      'verbose': 1
+                      }
+
+    a = Encode(site = 'autotrader')
+    columns = ['model', 'condition', 'extra', 'type', 'color', 'fuel']
+    a.label_encode(columns = columns, TRANSFORM_CUTOFF = 0)
+    df = a.df
+
+    val_a = Model(df, model = 'rf', params = params_rf, test_size = 0.3)
+    val_a.validate()
+
+    # Re-convert categorical features back to text:
+    for col in columns:
+        val_a.validate[col] = a.le[col][0].inverse_transform(val_a.validate[col])
+
+    # CREATE DEAL COLUMN
+    val_a.validate['deal'] = val_a.validate['pred'] - val_a.validate['price']
+
+
+    connect = dbConnect(host = 'localhost', user = 'root',
+                  passwd = 'default', db = 'find_car')
+    with connect:
+            # Make sure dtypes fit for MySQL db
+            dtype = {}
+            for i in range(len(val_a.validate.columns)):
+                if val_a.validate.columns[i] in ['color', 'condition', 'extra',
+                                                 'model', 'type', 'fuel']:
+                    dtype[val_a.validate.columns[i]] = 'TEXT'
+                elif val_a.validate.columns[i] in ['url']:
+                    dtype[val_a.validate.columns[i]] = 'MEDIUMTEXT'
+                elif val_a.validate.columns[i] in ['odometer', 'year', 'citympg'
+                                       'hwympg', 'cylinders']:
+                    dtype[val_a.validate.columns[i]] = 'INTEGER'
+                else:
+                    dtype[val_a.validate.columns[i]] = 'REAL'
+
+            # Send to MySQL database, if table exists, continue to next
+            val_a.validate.to_sql(name = 'result_at', con = connect.con,
+                      flavor = 'mysql', dtype = dtype)
+        """
     '''
 
 
