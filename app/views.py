@@ -112,7 +112,7 @@ def carcheck():
 
     if request.method == 'POST':
         urlcall = request.form['urlcall']
-        url = urlcall.lower()
+        url = urlcall
         if re.search('craigslist', url):
             site = 'craigslist'
             data = {'model': [],
@@ -134,15 +134,15 @@ def carcheck():
             try:
                 html = requests.get(url)
             except:
-                return render_template("invalid.html")
+                reason = 'Bad URL'
+                return render_template("invalid.html", reason = reason)
         elif re.search('autotrader', url):
             site = 'autotrader'
             hdr = {'Host': 'www.autotrader.com',
                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; ' +\
                                  'rv:43.0) Gecko/20100101 Firefox/43.0'
                    }
-            data = {'url': [],
-                    'model': [],
+            data = {'model': [],
                     'condition': [],
                     'year': [],
                     'extra': [],
@@ -159,7 +159,8 @@ def carcheck():
             try:
                 html = requests.get(url, headers = hdr)
             except:
-                return render_template("invalid.html")
+                reason = 'Bad URL'
+                return render_template("invalid.html", reason = reason)
 
         if site == 'craigslist':
             soup = BeautifulSoup(html.text, 'lxml')
@@ -211,12 +212,14 @@ def carcheck():
                               '[cC][rR][uU][zZ][eE]|' +\
                               '[eE][lL][aA][nN][tT][rR][aA]|' +\
                               '[fF][oO][rR][tT][eE]|' +\
-                              '[mM][aA][zZ][dD][aA]', title).group(0)
+                              '[mM][aA][zZ][dD][aA]', title)
 
             # Making sure we get SOMETHING
             if query == None:
-                return render_template("invalid.html")
-            query = query.lower()
+                reason = 'Did not detect civic, corolla, focus, cruze' +\
+                         ', elantra, forte, or mazda'
+                return render_template("invalid.html", reason = reason)
+            query = query.group(0).lower()
 
             # Fill in first features (from webpage or from title)
             if dat[0].span.get_text() != None:
@@ -520,9 +523,165 @@ def carcheck():
 
         # AUTOTRADER TIME
         else:
-            return render_template("invalid.html")
+            soup2 = BeautifulSoup(html.text, 'lxml')
 
+            # Add price, if no price - skip to next car
+            price = soup2.find('span', {'title': re.compile('[pP]rice')})
+            price_check = 0 # if price_check = 1, means null value
+            if price == None:
+                # FILTER OUT LATER BECAUSE OF RIDICULOUSNESS
+                data['price'] = 0
+                price_check = 1
+            else:
+                price = price.get_text().lstrip('$').replace(',', '')
+                data['price'] += [int(price)]
 
+            title = soup2.title.get_text()
+            # Determine car model
+            query = re.search('[cC][iI][vV][iI][cC]|' +\
+                              '[cC][oO][rR][oO][lL][lL][aA]|' +\
+                              '[fF][oO][cC][uU][sS]|' +\
+                              '[cC][rR][uU][zZ][eE]|' +\
+                              '[eE][lL][aA][nN][tT][rR][aA]|' +\
+                              '[fF][oO][rR][tT][eE]|' +\
+                              '[mM][aA][zZ][dD][aA]', title)
+
+            # Making sure we get SOMETHING
+            if query:
+                query = query.group(0).lower()
+            else:
+                reason = 'Did not detect civic, corolla, focus, cruze' +\
+                         ', elantra, forte, or mazda'
+                return render_template("invalid.html", reason = reason)
+
+            # Add model
+            if query == 'civic':
+                data['model'] += ['civic']
+            elif query == 'corolla':
+                data['model'] += ['corolla']
+            elif query == 'focus':
+                data['model'] += ['focus']
+            elif query == 'cruze':
+                data['model'] += ['cruze']
+            elif query == 'elantra':
+                data['model'] += ['elantra']
+            elif query == 'mazda':
+                data['model'] += ['mazda3']
+            elif query == 'forte':
+                data['model'] += ['forte']
+
+            # Add highway mpg
+            hwympg = soup2.find('div', {'class': re.compile('mpg-hwy')})
+            if hwympg != None:
+                hwympg = hwympg.span.get_text()
+                try:
+                    data['hwympg'] += [int(hwympg)]
+                except:
+                    data['hwympg'] += [np.nan]
+            else:
+                data['hwympg'] += [np.nan]
+
+            # Add city mpg
+            citympg = soup2.find('div', {'class': re.compile('mpg-city')})
+            if citympg != None:
+                citympg = citympg.span.get_text()
+                try:
+                    data['citympg'] += [int(citympg)]
+                except:
+                    data['citympg'] += [np.nan]
+            else:
+                data['citympg'] += [np.nan]
+
+            # Add fuel
+            try:
+                fuel = soup2.findAll('span', {'class': 'mpg'})[2]
+            except:
+                fuel = None
+            if fuel != None:
+                fuel = fuel.get_text()
+                try:
+                    data['fuel'] += [fuel]
+                except:
+                    data['fuel'] += ['unknown_fuel']
+            else:
+                data['fuel'] += ['unknown_fuel']
+
+            # Add year
+            title = soup2.title.get_text()
+            year = re.search('([^a-zA-Z0-9:\.*_]\s*[12][09][0-9][0-9]'+\
+                              '[^a-zA-Z0-9~_\-\.]|'+\
+                              '^[12][09][0-9][0-9][^a-zA-Z0-9~_\-\.])',
+                              title)
+            if year != None:
+                try:
+                    data['year'] += [int(year.group(0))]
+                except:
+                    data['year'] += [np.nan]
+            else:
+                data['year'] += [np.nan]
+
+            # Add condition
+            condition = soup2.find('h1',
+                                  {'class': 'listing-title atcui-block'})
+            if condition != None:
+                try:
+                    condition = condition.get_text().split(' ')
+                    if condition[0] == 'Certified':
+                        data['condition'] += ['certified']
+                    elif condition[0] == 'New':
+                        data['condition'] += ['new']
+                    elif condition[0] == 'Used':
+                        data['condition'] += ['used']
+                    else:
+                        data['condition'] += ['unknown_condition']
+                except:
+                    data['condition'] += ['unknown_condition']
+            else:
+                data['condition'] += ['unknown_condition']
+
+            # Add color
+            color = soup2.find('span', {'class':"colorName"})
+            if re.search('[eE]xterior', color.get_text()):
+                color = color.span.get_text()
+                data['color'] += [color]
+            else:
+                data['color'] += ['unknown_color']
+
+            # Add cylinders
+            cyl = re.search('[0-9] [cC]ylinder', soup2.get_text())
+            if cyl:
+                cyl = cyl.group(0).split(' ')
+                data['cylinders'] += [int(cyl[0])]
+            else:
+                data['cylinders'] += [np.nan]
+
+            # Add extra and type
+            trim = soup2.find('span', {'class':'heading-trim'})
+            if trim:
+                trim = trim.get_text().split(' ')
+                data['extra'] += [trim[1]]
+                if len(trim) > 2:
+                    data['type'] += [trim[2]]
+                else:
+                    data['type'] += [np.nan]
+            else:
+                data['extra'] += [np.nan]
+                data['type'] += [np.nan]
+
+            # Add odometer
+            odometer = soup2.find('span', {'class':"atcui-clear heading-mileage"})
+            if odometer != None:
+                odometer = odometer.get_text().split(' ')
+                odometer = odometer[0]
+                odometer = odometer.replace(',', '')
+                data['odometer'] += [int(odometer)]
+            else:
+                data['odometer'] += [np.nan]
+
+            # Make dataframe
+            testdf = pd.DataFrame(data)
+            # testdf will be encoded, make a non-encoded version
+            df_temp = testdf.copy() # Make a copy for reading off later
 
 
 
@@ -568,6 +727,41 @@ def carcheck():
                 # Filter ridiculous prices
                 df = df[df['price'] > 1000]
 
+                # Correct for null values
+                for col in df.columns:
+                    # Honda civics are 4 cylinders
+                    if col == 'cylinders':
+                        df.loc[pd.isnull(df[col]), col] = 4
+                        testdf.loc[pd.isnull(testdf[col]), col] = 4
+                    elif col == 'odometer':
+                        df.loc[pd.isnull(df[col]), col] = 20000
+                        testdf.loc[pd.isnull(testdf[col]), col] = 20000
+                    elif col == 'extra':
+                        df.loc[pd.isnull(df[col]), col] = 'unknown'
+                        testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
+                    elif col == 'fuel':
+                        df.loc[pd.isnull(df[col]), col] = 'gas'
+                        testdf.loc[pd.isnull(testdf[col]), col] = 'gas'
+                    elif col == 'drive':
+                        df.loc[pd.isnull(df[col]), col] = 'fwd'
+                        testdf.loc[pd.isnull(testdf[col]), col] = 'fwd'
+                    elif col == 'transmission':
+                        df.loc[pd.isnull(df[col]), col] = 'auto'
+                        testdf.loc[pd.isnull(testdf[col]), col] = 'auto'
+                    elif col == 'type':
+                        df.loc[pd.isnull(df[col]), col] = 'unknown'
+                        testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
+                    elif col == 'color':
+                        df.loc[pd.isnull(df[col]), col] = 'unknown'
+                        testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
+                    elif col == 'condition':
+                        df.loc[pd.isnull(df[col]), col] = 'unknown'
+                        testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
+                    elif col == 'date':
+                        df[col] = pd.to_datetime(df.date, format = '%Y-%m-%d')
+                        testdf[col] = pd.to_datetime(testdf.date,
+                                                    format = '%Y-%m-%d')
+
             # Autotrader df
             else:
                 at = ['chev', 'ford', 'honda', 'hyund', 'kia',
@@ -582,39 +776,19 @@ def carcheck():
                 df = pd.concat(df_dict.values(), axis = 0)
                 df = df.reset_index().drop('index', axis = 1)
 
-        # Correct for null values
-        for col in df.columns:
-            # Honda civics are 4 cylinders
-            if col == 'cylinders':
-                df.loc[pd.isnull(df[col]), col] = 4
-                testdf.loc[pd.isnull(testdf[col]), col] = 4
-            elif col == 'odometer':
-                df.loc[pd.isnull(df[col]), col] = 20000
-                testdf.loc[pd.isnull(testdf[col]), col] = 20000
-            elif col == 'extra':
-                df.loc[pd.isnull(df[col]), col] = 'unknown'
-                testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
-            elif col == 'fuel':
-                df.loc[pd.isnull(df[col]), col] = 'gas'
-                testdf.loc[pd.isnull(testdf[col]), col] = 'gas'
-            elif col == 'drive':
-                df.loc[pd.isnull(df[col]), col] = 'fwd'
-                testdf.loc[pd.isnull(testdf[col]), col] = 'fwd'
-            elif col == 'transmission':
-                df.loc[pd.isnull(df[col]), col] = 'auto'
-                testdf.loc[pd.isnull(testdf[col]), col] = 'auto'
-            elif col == 'type':
-                df.loc[pd.isnull(df[col]), col] = 'unknown'
-                testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
-            elif col == 'color':
-                df.loc[pd.isnull(df[col]), col] = 'unknown'
-                testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
-            elif col == 'condition':
-                df.loc[pd.isnull(df[col]), col] = 'unknown'
-                testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
-            elif col == 'date':
-                df[col] = pd.to_datetime(df.date, format = '%Y-%m-%d')
-                testdf[col] = pd.to_datetime(testdf.date, format = '%Y-%m-%d')
+                # For NULL values, average over non_null values for each model
+                # Replace NULL values with average value - not much std
+                for col in ['citympg', 'hwympg', 'cylinders']:
+                    for val in df['model'].unique():
+                        mean = np.mean(df.loc[(pd.notnull(df[col])) \
+                                       & (df['model'] == val), col])
+
+                        df.loc[(pd.isnull(df[col])) \
+                                    & (df['model'] == val),col] = mean
+                        testdf.loc[(pd.isnull(testdf[col])) \
+                                    & (testdf['model'] == val),col] = mean
+
+
 
 
 
@@ -643,14 +817,20 @@ def carcheck():
                 le = PruneLabelEncoder()
                 le.fit(df[col], TRANSFORM_CUTOFF)
                 # Label Encode new DF
-                testdf[col] = le.transform(testdf[col])
+                print col
+                print testdf[col]
+                try:
+                    testdf[col] = le.transform(testdf[col])
+                except:
+                    reason = 'column encode: ' + col + ' = '+str(testdf[col][0])
+                    return render_template("invalid.html", reason = reason)
 
         # Drop null values in year
         # Do linear regression prediction later for improved feature
         df = df[pd.notnull(df['year'])]
         if testdf[pd.notnull(testdf['year'])].shape[0] == 0:
-            # Come up with something smarter
-            testdf['year'] = 2000
+            reason = 'No reported year'
+            return render_template("invalid.html", reason = reason)
 
         # Place price column at the end
         price = df['price'].copy()
@@ -712,13 +892,20 @@ def carcheck():
         show(p)
         """
         print suggestion
-        html = render_template("carcheck.html", deal = deal,
-                                url = url,
-                                suggestion = suggestion,
-                                model = df_temp['model'][0],
-                                year = df_temp['year'][0],
-                                odometer = df_temp['odometer'][0],
-                                date = df_temp['date'][0])
+        if site == 'craigslist':
+            html = render_template("carcheck.html", deal = deal,
+                                    url = url,
+                                    suggestion = suggestion,
+                                    model = df_temp['model'][0],
+                                    year = df_temp['year'][0],
+                                    odometer = df_temp['odometer'][0])
+        else:
+            html = render_template("carcheck.html", deal = deal,
+                                    url = url,
+                                    suggestion = suggestion,
+                                    model = df_temp['model'][0],
+                                    year = df_temp['year'][0],
+                                    odometer = df_temp['odometer'][0])
 
     else:
         # It will be a get request instead
