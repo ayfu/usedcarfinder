@@ -5,8 +5,16 @@
 /* Links */
 a,
 a:focus,
-a:hover {
-  color: #fff;
+a:hover {color: #fff;},
+a:link { color: blue }, /* unvisited links */
+a:visited { color: purple }, /* visited links */
+
+/* Good deal colors */
+.gooddeal {
+    color: green
+}
+.baddeal {
+    color: red
 }
 
 /* Custom default button */

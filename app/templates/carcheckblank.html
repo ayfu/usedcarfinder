@@ -57,54 +57,14 @@
           </div>
 
           <div class="inner">
-              <p><br><br><br></p>
+              <p><br><br><br><br><br></p>
+            <h1 class="cover-heading">Find Great Deals for Used Cars</h1>
+            <p class="body">Enter a link from Craigslist or Autotrader below</p>
             <p><br></p>
-             <h2 class="cover-heading"><div {%if gooddeal == 1%}class="gooddeal"{% else %}class="baddeal"{% endif %}>{{suggestion}}</div></h2>
 
             <p></p>
-            <table border="5" style="width:60%">
-              <tr>
-                <td>Model</td>
-                <td>Year</td>
-                <td>Mileage</td>
-                <td>Listed Price</td>
-                <td>The Authority Price</td>
-                <td>Savings</td>
-              </tr>
-              <tr>
-                <td>{{entries['model']}}</td>
-                <td>{{entries['year']}}</td>
-                <td>{{entries['odometer']}}</td>
-                <td>{{entries['price']}}</td>
-                <td>{{entries['prediction']}}</td>
-                <td {%if gooddeal == 1%}class="gooddeal"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td>
-              </tr>
-          </table>
-          <p><br></p>
-          <p class="body">Here are other cars you may like</p>
-          <table border = "5" style = "width:60%">
-              <tr>
-                  <td>Model</td>
-                  <td>Year</td>
-                  <td>Mileage</td>
-                  <td>Listed Price</td>
-                  <td>The Authority Price</td>
-                  <td>Savings</td>
-                  <td>Link</td>
-              </tr>
-              {% for df in rec %}
-              <tr>
-                  <td>{{df['model']}}</td>
-                  <td>{{df['year']}}</td>
-                  <td>{{df['odometer']}}</td>
-                  <td>{{df['price']}}</td>
-                  <td>{{df['prediction']}}</td>
-                  <td>{{df['deal']}}</td>
-                  <td><a href = {{df['url']}} style="color:blue;">link</a></td>
-              </tr>
-              {% endfor %}
-        </table>
-            <p class="body"><font size = "4">Enter a link from Craigslist or Autotrader below</font></p>
+
+
             <p class="body"><font size = "2">Car Choices: Honda Civic, Toyota Corolla, Ford Focus, Chevy Cruze, Hyundai Elantra, Mazda 3, Kia Forte </font></p>
 
             <form align="center" action="/carcheck" method="POST">

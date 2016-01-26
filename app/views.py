@@ -869,19 +869,80 @@ def carcheck():
         # Calculate if this is a deal
         deal = pred[0] - price
         deal = round(deal, 2)
+        deal_compare = deal
 
         if price_check == 1:
             suggestion = 'NO LISTED PRICE! RUN AWAY FROM THIS SNEAKY PERSON'
         elif deal > 0:
             suggestion = 'GOOD DEAL'
+            gooddeal = 1
+            deal = '$' + str(deal)
         else:
             suggestion = 'BAD DEAL'
+            gooddeal = 0
+            deal = str(deal).split('-')
+            deal[0] = '-'
+            deal = '$'.join(deal)
 
-        deal = str(deal) + ' Dollars'
+        price = round(price, 2)
+        pred = round(pred[0], 2)
+        model = df_temp['model'][0]
+        odometer = df_temp['odometer'][0]
+        year = df_temp['year'][0]
 
 
+        # Convert df_temp to a dictionary to loop through for webpage
+        entries = dict(model = model,
+                       deal = deal,
+                       price = '$'+str(price),
+                       prediction = '$'+str(pred),
+                       year = year,
+                       odometer = odometer)
 
-        # convert input_team to a string for html and then passed to img function
+        ########################################################################
+        # Get Recommendations for Cars
+        ########################################################################
+        # Connect with MySQL and grab data into one dataframe
+        connect = dbConnect(host = 'localhost', user = 'root',
+                            passwd = 'default', db = 'find_car')
+
+        with connect:
+            if site == 'craigslist':
+                sql = 'SELECT * FROM result_cg;'
+                df_result = pd.read_sql_query(sql,
+                                              con = connect.con,
+                                              index_col = 'index')
+            else:
+                sql = 'SELECT * FROM result_at;'
+                df_result = pd.read_sql_query(sql,
+                                              con = connect.con,
+                                              index_col = 'index')
+
+        df_result = df_result[df_result['model'] == model]
+        if df_result.shape[0] > 0:
+            df_result = df_result[(df_result['price'] < 1.2*price) & \
+                                  (df_result['price'] > 0.8*price)]
+            if df_result.shape[0] > 0:
+                df_result = df_result[(df_result['year'] < 1.2*price) & \
+                                      (df_result['year'] > 0.8*year)]
+                if df_result.shape[0] > 0:
+                    df_result = df_result[(df_result['deal'] > deal_compare) & \
+                                          (df_result['deal'] < 7000)]
+        df_result = df_result.sort_values('deal', axis = 0, ascending = False)
+
+        if df_result.shape[0] > 2:
+            df_result = df_result.iloc[:3, :]
+
+        df_result = df_result.reset_index().drop('index', axis = 1)
+        rec = [dict(model = df_result['model'][row],
+               deal = '$'+str(round(df_result['deal'][row], 2)),
+               price = '$'+str(round(df_result['price'][row], 2)),
+               prediction = '$'+str(round(df_result['pred'][row], 2)),
+               year = df_result['year'][row],
+               odometer = df_result['odometer'][row],
+               url = df_result['url'][row]) \
+               for row in range(df_result.shape[0])]
+
 
         """
         # Debugging
@@ -893,24 +954,18 @@ def carcheck():
         """
         print suggestion
         if site == 'craigslist':
-            html = render_template("carcheck.html", deal = deal,
-                                    url = url,
-                                    suggestion = suggestion,
-                                    model = df_temp['model'][0],
-                                    year = df_temp['year'][0],
-                                    odometer = df_temp['odometer'][0])
+            html = render_template("carcheck.html", entries = entries,
+                                    url = url, suggestion = suggestion,
+                                    rec = rec, gooddeal = gooddeal)
         else:
-            html = render_template("carcheck.html", deal = deal,
-                                    url = url,
-                                    suggestion = suggestion,
-                                    model = df_temp['model'][0],
-                                    year = df_temp['year'][0],
-                                    odometer = df_temp['odometer'][0])
+            html = render_template("carcheck.html", entries = entries,
+                                   url = url, suggestion = suggestion,
+                                   rec = rec, gooddeal = gooddeal)
 
     else:
         # It will be a get request instead
         url = "http://sfbay.craigslist.org/pen/ctd/5413262011.html"
-        html = render_template("carcheck.html", url = url)
+        html = render_template("carcheckblank.html", url = url)
 
     return html
 
