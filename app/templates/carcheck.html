@@ -60,13 +60,22 @@
           </div>
 
           <div class="inner">
-              <p><br><br><br><br></p>
-              <div id="plot" class="center-table" style="width:70%; height:400px;"></div>
-            <p><br><br></p>
-             <h2 class="cover-heading"><div {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{suggestion}}</div></h2>
-             <p></p>
+              <p><br><br></p>
+               <h2 class="cover-heading"><div {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{suggestion}}</div></h2>
+              <p></p>
+              <!-- PLOT -->
+              <div class="center-table" style="width:70%">
+                <div id="plot"></div>
+              </div>
 
-            <table border="5" style="width:80%" class = "center-table">
+            <p><br><br></p>
+
+
+             <p></p>
+             <!-- <div class="table-height"> -->
+            <div style = "margin-top:15%">
+            <table border="0" style="width:80%;" class='center-table'>
+            <!-- <table border="5" class='table-height'>     -->
               <tr style="font-weight:bold">
                 <td>Model</td>
                 <td>Year</td>
@@ -85,7 +94,8 @@
               </tr>
 
           </table>
-
+         </div>
+         <!-- </div> -->
           <p><br><br><br><br><br><br><br></p>
           <button class = "btntbl">Click here for recommended cars</button>
           <div class="center-table" style="width:80%">
@@ -160,7 +170,7 @@
             type: 'bar'
         },
         title: {
-            text: '{{suggestion}}'
+            text: ' '
         },
         xAxis: {
             categories: ['Deal Quality']

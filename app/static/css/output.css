@@ -243,7 +243,25 @@ input[type=text] {
   }
 }
 
+/*HIGHCHARTS STYLINGS*/
+#plot {
+    height:35%;
+    width:70%;
+    /*align: 'center';*/
+    position:absolute;
+    /*margin: 0 auto !important;*/
+    /*float: none !important;*/
+}
+
 /*TABLE STYLINGS*/
+
+.table-height
+{
+    margin-top: 10%;
+    width: 70%;
+    margin: 0 auto !important;
+    float: none !important;
+}
 
 .center-table
 {

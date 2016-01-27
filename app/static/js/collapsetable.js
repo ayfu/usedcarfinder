@@ -11,4 +11,5 @@ $(document).ready(function(){
     $(".expandtbl2").toggle();
   });
   $('#table_id').DataTable();
+  $(window).height();
 });
