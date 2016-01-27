@@ -11,10 +11,10 @@ a:visited { color: purple }, /* visited links */
 
 /* Good deal colors */
 .gooddeal {
-    color: green
+    color: #347C2C
 }
 .baddeal {
-    color: red
+    color: #800517
 }
 
 /* Custom default button */

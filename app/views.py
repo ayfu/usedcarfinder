@@ -875,11 +875,11 @@ def carcheck():
             suggestion = 'NO LISTED PRICE! RUN AWAY FROM THIS SNEAKY PERSON'
         elif deal > 0:
             suggestion = 'GOOD DEAL'
-            gooddeal = 1
+            gooddeal = 1 # Used to toggle Green on web page for good deal
             deal = '$' + str(deal)
         else:
             suggestion = 'BAD DEAL'
-            gooddeal = 0
+            gooddeal = 0 # Used to toggle Red on web page for bad deal
             deal = str(deal).split('-')
             deal[0] = '-'
             deal = '$'.join(deal)
@@ -918,20 +918,23 @@ def carcheck():
                                               con = connect.con,
                                               index_col = 'index')
 
+        # Filter SQL query to get recommendations
         df_result = df_result[df_result['model'] == model]
         if df_result.shape[0] > 0:
-            df_result = df_result[(df_result['price'] < 1.2*price) & \
-                                  (df_result['price'] > 0.8*price)]
+            df_result = df_result[(df_result['price'] < 1.4*price) & \
+                                  (df_result['price'] > 0.6*price)]
             if df_result.shape[0] > 0:
-                df_result = df_result[(df_result['year'] < 1.2*price) & \
-                                      (df_result['year'] > 0.8*year)]
+                df_result = df_result[(df_result['year'] < 1.4*price) & \
+                                      (df_result['year'] > 0.6*year)]
                 if df_result.shape[0] > 0:
                     df_result = df_result[(df_result['deal'] > deal_compare) & \
-                                          (df_result['deal'] < 7000)]
+                                          (df_result['deal'] < 7000) & \
+                                          (df_result['deal'] > 100)]
         df_result = df_result.sort_values('deal', axis = 0, ascending = False)
 
-        if df_result.shape[0] > 2:
-            df_result = df_result.iloc[:3, :]
+        # If many results, get top 3 results
+        #if df_result.shape[0] > 9:
+        #    df_result = df_result.iloc[:10, :]
 
         df_result = df_result.reset_index().drop('index', axis = 1)
         rec = [dict(model = df_result['model'][row],

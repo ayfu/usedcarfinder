@@ -16,6 +16,9 @@
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- jQuery for dataTables -->
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+
     <!-- Custom styles for this template -->
     <link href="/static/css/output.css" rel="stylesheet">
 
@@ -62,7 +65,8 @@
              <h2 class="cover-heading"><div {%if gooddeal == 1%}class="gooddeal"{% else %}class="baddeal"{% endif %}>{{suggestion}}</div></h2>
 
             <p></p>
-            <table border="5" style="width:60%">
+            <table border="5" style="width:80%">
+              <!-- <thead> -->
               <tr>
                 <td>Model</td>
                 <td>Year</td>
@@ -70,7 +74,9 @@
                 <td>Listed Price</td>
                 <td>The Authority Price</td>
                 <td>Savings</td>
-              </tr>
+             </tr>
+            <!-- </thead> -->
+            <!-- <tbody> -->
               <tr>
                 <td>{{entries['model']}}</td>
                 <td>{{entries['year']}}</td>
@@ -79,11 +85,13 @@
                 <td>{{entries['prediction']}}</td>
                 <td {%if gooddeal == 1%}class="gooddeal"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td>
               </tr>
+          <!-- </tbody> -->
           </table>
           <p><br></p>
-          <p class="body">Here are other cars you may like</p>
-          <table border = "5" style = "width:60%">
-              <tr>
+          <button class = "btntbl">Click here for recommended cars</button>
+          <table id="table_id" class="display" border = "5" style = "width:80%">
+           <thead>
+              <tr >
                   <td>Model</td>
                   <td>Year</td>
                   <td>Mileage</td>
@@ -92,6 +100,8 @@
                   <td>Savings</td>
                   <td>Link</td>
               </tr>
+          </thead>
+          <tbody class = "expandtbl1">
               {% for df in rec %}
               <tr>
                   <td>{{df['model']}}</td>
@@ -99,21 +109,21 @@
                   <td>{{df['odometer']}}</td>
                   <td>{{df['price']}}</td>
                   <td>{{df['prediction']}}</td>
-                  <td>{{df['deal']}}</td>
+                  <td style="color:#347C2C">{{df['deal']}}</td>
                   <td><a href = {{df['url']}} style="color:blue;">link</a></td>
               </tr>
               {% endfor %}
+         </tbody>
         </table>
-            <p class="body"><font size = "4">Enter a link from Craigslist or Autotrader below</font></p>
-            <p class="body"><font size = "2">Car Choices: Honda Civic, Toyota Corolla, Ford Focus, Chevy Cruze, Hyundai Elantra, Mazda 3, Kia Forte </font></p>
-
+            <p><br></p>
             <form align="center" action="/carcheck" method="POST">
                 <!-- width style also taken care of in cover.css file for the "input[type=text]" section" -->
                <input type="text" name="urlcall" style="width: 70%;" value={{url}}>
-               <p></p>
-               <input type="submit" name="my-form" >
+               <p class="body"><font size = "2">Car Choices: Honda Civic, Toyota Corolla, Ford Focus, Chevy Cruze, Hyundai Elantra, Mazda 3, Kia Forte </font></p>
+               <button type="submit">Submit</button>
+               <!-- <input type="submit" name="my-form" > -->
            </form>
-           <p><br></p>
+
           </div>
 
           <!--div class="mastfoot">
@@ -132,7 +142,10 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="/static/js/collapsetable.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
+    <!-- jQuery datatables -->
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
   </body>
