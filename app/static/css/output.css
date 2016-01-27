@@ -243,6 +243,13 @@ input[type=text] {
   }
 }
 
+/*TABLE STYLINGS*/
+
+.center-table
+{
+  margin: 0 auto !important;
+  float: none !important;
+}
 
 table a:link {
 	color: #666;
@@ -262,7 +269,7 @@ table a:hover {
 table {
 	font-family:Arial, Helvetica, sans-serif;
 	color:#666;
-	font-size:15px;
+	font-size:20px;
 	text-shadow: 1px 1px 0px #fff;
 	background:#eaebec;
 	margin:20px;
