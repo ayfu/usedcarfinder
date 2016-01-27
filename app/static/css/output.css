@@ -11,10 +11,10 @@ a:visited { color: purple }, /* visited links */
 
 /* Good deal colors */
 .gooddeal {
-    color: #347C2C
+    color: #347C2C;
 }
 .baddeal {
-    color: #C11B17
+    color: #C11B17;
 }
 
 /* Custom default button */
@@ -208,7 +208,7 @@ input[type=text] {
 @media (min-width: 768px) {
   /* Pull out the header and footer */
   .masthead {
-    position: fixed;
+    position: absolute;;
     top: 0;
     background-color: #000000;
     opacity: 0.9;

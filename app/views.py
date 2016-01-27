@@ -871,6 +871,7 @@ def carcheck():
         deal = round(deal, 2)
         deal_compare = deal
 
+        gooddeal = 0
         if price_check == 1:
             suggestion = 'NO LISTED PRICE! RUN AWAY FROM THIS SNEAKY PERSON'
         elif deal > 0:
@@ -918,6 +919,12 @@ def carcheck():
                                               con = connect.con,
                                               index_col = 'index')
 
+        # Define Deal Quality
+        numerator = df_result[df_result['deal'] < deal_compare].shape[0]
+        denominator = df_result.shape[0]
+        dealquality = float(numerator)/float(denominator) * 100
+        dealquality = round(dealquality, 1)
+
         # Filter SQL query to get recommendations
         df_result = df_result[df_result['model'] == model]
         if df_result.shape[0] > 0:
@@ -937,6 +944,8 @@ def carcheck():
         #    df_result = df_result.iloc[:10, :]
 
         df_result = df_result.reset_index().drop('index', axis = 1)
+
+        # Format results for HTML
         rec = [dict(model = df_result['model'][row],
                deal = '$'+str(round(df_result['deal'][row], 2)),
                price = '$'+str(round(df_result['price'][row], 2)),
@@ -946,7 +955,6 @@ def carcheck():
                url = df_result['url'][row]) \
                for row in range(df_result.shape[0])]
 
-
         """
         # Debugging
         output_file("tt2.html")
@@ -955,15 +963,19 @@ def carcheck():
         f.close()
         show(p)
         """
-        print suggestion
+        # print suggestion, gooddeal
+        # print gooddeal == 1
+        print dealquality
         if site == 'craigslist':
             html = render_template("carcheck.html", entries = entries,
-                                    url = url, suggestion = suggestion,
-                                    rec = rec, gooddeal = gooddeal)
+                                   url = url, suggestion = suggestion,
+                                   rec = rec, gooddeal = gooddeal,
+                                   dealquality = dealquality)
         else:
             html = render_template("carcheck.html", entries = entries,
                                    url = url, suggestion = suggestion,
-                                   rec = rec, gooddeal = gooddeal)
+                                   rec = rec, gooddeal = gooddeal,
+                                   dealquality = dealquality)
 
     else:
         # It will be a get request instead
@@ -971,63 +983,3 @@ def carcheck():
         html = render_template("carcheckblank.html", url = url)
 
     return html
-
-
-# Not using anymore
-
-@app.route('/img/<input_team>')
-def img(input_team):
-    input_team = list(input_team.split(','))
-    print len(input_team)
-    print input_team
-    sql = "SELECT * FROM results"
-    df = pd.read_sql_query(sql, g.db)
-    df = df.drop('index', axis = 1)
-    print 'Dataframe shape:', df.shape
-    print list(df.columns)
-    #con = connect_db()
-    #cur = con.cursor()
-    #cur.execute("SELECT * FROM results;")
-    #con.commit()
-    #print cur.fetchall()
-    #con.close()
-    p_df = df[df['team'].isin(input_team)].copy()
-    print 'New Dataframe shape:', p_df.shape
-    pred = np.array(p_df['pred'])
-    y_test = np.array(p_df['points'])
-    avg_pm = np.array(p_df['avg_pm'])
-
-
-    plt.style.use('ggplot')
-    fig, ax = plt.subplots(figsize = (10, 8))
-
-    x1 = np.arange(0,180)
-    y1 = np.zeros(180)+180
-    x2 = np.arange(0,-180, -1)
-    y2 = np.zeros(180)-180
-    ax.plot(x1, y1)
-    plt.fill_between(x1, y1, 0, color=(0.01,0.40,0.1), alpha = 0.25)
-    plt.fill_between(x2, y2, 0, color=(0.01,0.40,0.1), alpha = 0.25)
-    ax.scatter(y_test, avg_pm, color = (0,0.2,0.5),
-               label = 'Base Model Predictions', s = 70, alpha = 1)
-    ax.scatter(y_test, pred, color = (0.6,0.0,0.2),
-               label = 'New Model Predictions',
-               s = 70, alpha = 1)
-    ax.plot(np.arange(-200, 200),np.arange(-200, 200), color = 'black',
-               label = 'Perfect Prediction Line',
-               lw = 3, alpha = 0.6, ls = 'dashed')
-    #ax.plot(x,pred_y, label = 'Fit', lw = 5)
-    ax.set_xlabel('Actual +/- (points/48 min)',fontsize = 14)
-    ax.set_ylabel('Predicted +/- (points/48 min)', fontsize = 14)
-    ax.set_title('Prediction Results', fontsize = 20)
-    ax.set_xlim(-175,175)
-    ax.set_ylim(-175,175)
-    ax.legend(loc=2, fontsize = 12)
-    ax.tick_params(labelsize =12)
-
-    canvas=FigureCanvas(fig)
-    png_output = StringIO.StringIO()
-    canvas.print_png(png_output)
-    response=make_response(png_output.getvalue())
-    response.headers['Content-Type'] = 'image/png'
-    return response
