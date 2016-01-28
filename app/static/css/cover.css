@@ -242,3 +242,19 @@ input[type=text] {
       width: 100%;
   }
 }
+
+.consistent-font
+{
+    font-size: large;
+    color: ##333333;
+    font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+
+.box{
+    background: #FFF;
+    opacity: 0.5;
+    overflow: hidden;
+    max-width: 55%;
+    margin: 50px auto;
+    padding: 20px;
+}

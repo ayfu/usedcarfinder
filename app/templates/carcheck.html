@@ -46,7 +46,7 @@
                 <a href="{{ url_for('index') }}">Used Car Price Authority</a></h3>
               <nav>
                 <ul class="nav masthead-nav">
-                  <li><a href="{{ url_for('carcheck') }}">Check Car</a></li>
+                  <!-- <li><a href="{{ url_for('carcheck') }}">Check Car</a></li> -->
                   <li class="active"><a href="{{ url_for('index') }}"><i class="fa fa-home fa-lg"></i></a></li>
 
                   <li><a href="https://github.com/ayfu/">
@@ -60,21 +60,21 @@
           </div>
 
           <div class="inner">
-              <p><br><br></p>
-               <h2 class="cover-heading"><div {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{suggestion}}</div></h2>
-              <p></p>
+              <p><br><br><br><br></p>
+               <!-- <h2 class="cover-heading"><div {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{suggestion}}</div></h2> -->
+               <!-- <p><div {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>This deal is in the top {{dealquality}}% of deals analyzed for {{site}}</div></p> -->
+
+              <!-- <p></p> -->
               <!-- PLOT -->
               <div class="center-table" style="width:70%">
                 <div id="plot"></div>
               </div>
 
-            <p><br><br></p>
 
-
-             <p></p>
              <!-- <div class="table-height"> -->
-            <div style = "margin-top:15%">
-            <table border="0" style="width:80%;" class='center-table'>
+             <p></p>
+            <div style = "margin-top:22%">
+            <table border="0" style="width:50%;" class='center-table consistent-font'>
             <!-- <table border="5" class='table-height'>     -->
               <tr style="font-weight:bold">
                 <td>Model</td>
@@ -90,17 +90,28 @@
                 <td>{{entries['odometer']}}</td>
                 <td>{{entries['price']}}</td>
                 <td>{{entries['prediction']}}</td>
-                <td {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td>
+                <!-- <td {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td> -->
+                <td style = "color:{{color}}">{{entries['deal']}}</td>
               </tr>
 
           </table>
          </div>
          <!-- </div> -->
-          <p><br><br><br><br><br><br><br></p>
-          <button class = "btntbl">Click here for recommended cars</button>
-          <div class="center-table" style="width:80%">
-          <table id="table_id" class="display" border = "5">
-           <thead>
+          <p><br></p>
+          <form align="center" action="/carcheck" method="POST">
+              <!-- width style also taken care of in cover.css file for the "input[type=text]" section" -->
+             <input type="text" name="urlcall" style="width: 50%;" value={{url}}>
+             <button type="submit" class="btn btn-lg btn-default">Submit</button>
+             <!-- <p class="body"><font size = "2">Car Choices: Honda Civic, Toyota Corolla, Ford Focus, Chevy Cruze, Hyundai Elantra, Mazda 3, Kia Forte </font></p> -->
+
+             <!-- <input type="submit" name="my-form" > -->
+         </form>
+          <button class = "btntbl consistent-font">Click here for recommended cars</button>
+          <!-- <div class="center-table" style="width:80%"> -->
+          <!-- <table id="table_id" class="display" border = "0"> -->
+          <p><br></p>
+          <table class="sortable center-table expandtbl1 consistent-font" border="0" style="width:50%;">
+           <!-- <thead> -->
               <tr style="font-weight:bold">
                   <td>Model</td>
                   <td>Year</td>
@@ -110,8 +121,8 @@
                   <td>Savings</td>
                   <td>Link</td>
               </tr>
-          </thead>
-          <tbody class = "expandtbl1">
+          <!-- </thead> -->
+          <!-- <tbody class = "expandtbl1"> -->
               {% for df in rec %}
               <tr>
                   <td>{{df['model']}}</td>
@@ -119,21 +130,15 @@
                   <td>{{df['odometer']}}</td>
                   <td>{{df['price']}}</td>
                   <td>{{df['prediction']}}</td>
-                  <td style="color:#347C2C">{{df['deal']}}</td>
+                  <td style="color:#72B095">{{df['deal']}}</td>
                   <td><a href = {{df['url']}} style="color:blue;">link</a></td>
               </tr>
               {% endfor %}
-         </tbody>
+         <!-- </tbody> -->
         </table>
-    </div>
+    <!-- </div> -->
             <p><br></p>
-            <form align="center" action="/carcheck" method="POST">
-                <!-- width style also taken care of in cover.css file for the "input[type=text]" section" -->
-               <input type="text" name="urlcall" style="width: 70%;" value={{url}}>
-               <p class="body"><font size = "2">Car Choices: Honda Civic, Toyota Corolla, Ford Focus, Chevy Cruze, Hyundai Elantra, Mazda 3, Kia Forte </font></p>
-               <button type="submit">Submit</button>
-               <!-- <input type="submit" name="my-form" > -->
-           </form>
+
 
           </div>
 
@@ -156,6 +161,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="/static/js/collapsetable.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
+    <!-- Sort table -->
+    <script src="/static/js/sorttable.js"></script>
     <!-- Highcharts -->
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <!-- jQuery datatables -->
@@ -170,23 +177,99 @@
             type: 'bar'
         },
         title: {
-            text: ' '
+            text: '{{suggestion}}',
+            style: {
+                color: "{{color}}",
+                fontSize: "25px",
+                font: '25pt Trebuchet MS, Verdana, sans-serif'
+            }
         },
         xAxis: {
-            categories: ['Deal Quality']
+            categories: ['Prices ($)'],
+            labels:{
+                style: {
+                      fontSize:'20px'
+            }
+          },
+            lineColor: 'transparent',
+            lineWidth: 0,
+            gridLineWidth: 0,
+           minorGridLineWidth: 0,
+           lineColor: 'transparent'
         },
         yAxis: {
             title: {
-                text: 'Percentage %'
+                text: '',
+                style: {
+                          color: Highcharts.getOptions().colors[1],
+                          fontSize:'16px',
+                          font: '16pt Trebuchet MS, Verdana, sans-serif'
+                        }
             },
-            max: 100
+            labels: {
+                //   style: {
+                //     color: Highcharts.getOptions().colors[1],
+                //     fontSize:'15px'
+                //   }
+                enabled: false
+              },
+            max: {{max_num}},
+            min: {{min_num}},
+            lineWidth: 0,
+            gridLineWidth: 0,
+            minorGridLineWidth: 0,
+           lineColor: 'transparent'
+        }, plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    align: 'right',
+                    color: '#FFFFFF',
+                    x: -10,
+                    style: {
+                        fontSize:'15px'
+                    }
+                },
+                // pointPadding: 0.1,
+                groupPadding: 0
+            },
+
         },
         series: [{
-            name: 'Deal Quality',
-            data: [{{dealquality}}]
-        }]
-        });
+            name: 'Listed Price',
+            data: [{{price}}],
+            color: "{{color}}"
+        }, {
+            name: 'The Authority Price',
+            data: [{{pred}}],
+            color: "#616161"
+        }],
+        legend: {
+              itemStyle: {
+                 fontSize:'16px',
+                 font: '16pt Trebuchet MS, Verdana, sans-serif',
+                 color: '#616161'
+              },
+              itemHiddenStyle: {
+                 color: '#444'
+              }
+
+        }
+       });
     });
+
+
+    //    function (chart) { // on complete
+       //
+    //     chart.renderer.text("{{suggestion}}", 900, 50)
+    //         .attr({
+    //             rotation: 0
+    //         })
+    //         .css({
+    //             color: "{{color}}",
+    //             fontSize: '24px'
+    //         })
+    //         .add();}
     </script>
   </body>
 </html>

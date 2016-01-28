@@ -43,7 +43,7 @@
                 <a href="{{ url_for('index') }}">Used Car Price Authority</a></h3>
               <nav>
                 <ul class="nav masthead-nav">
-                  <li><a href="{{ url_for('carcheck') }}">Check Car</a></li>
+                  <!-- <li><a href="{{ url_for('carcheck') }}">Check Car</a></li> -->
                   <li class="active"><a href="{{ url_for('index') }}"><i class="fa fa-home fa-lg"></i></a></li>
 
                   <li><a href="https://github.com/ayfu/">
@@ -57,13 +57,19 @@
           </div>
 
           <div class="inner">
-              <p><br><br><br><br><br></p>
-            <h1 class="cover-heading"><font size = "10">Find Great Deals for Used Cars</font></h1>
-            <p class="body">Check Car: Give URL and check if car is a good deal</p>
-            <p class="body">Recommend Cars: Gives you a list of good deals on cars</p>
-            <p><br></p>
+              <p><br><br><br></p>
+            <div class="box">
+            <h1 class="cover-heading" style="color:#0d0d0d; font-family: "Trebuchet MS", Verdana, sans-serif;">Used Car: Deal or No Deal?</h1>
+            <p class="body consistent-font">Give URL: Find out if a used car on Craigslist of Autotrader is a good deal</p>
+            </div>
+            <!-- <p class="body consistent-font">Find out if the car is a good deal</p> -->
+            <!-- <p><br></p> -->
            <p class="lead">
-             <a href="{{ url_for('carcheck') }}" class="btn btn-lg btn-default">Check Car</a>
+               <form align="center" action="/carcheck" method="POST">
+               <input type="text" name="urlcall" style="width: 50%;" value={{url}}>
+               <button type="submit btn btn-lg btn-default" class="consistent-font">Submit</button>
+               <p class="body" style="color:#616161; font-family: "Trebuchet MS", Verdana, sans-serif;"><font size = "3">Car Choices: Honda Civic, Toyota Corolla, Ford Focus, Chevy Cruze, Hyundai Elantra, Mazda 3, Kia Forte </font></p>
+                </form>
            </p>
            <p></p>
           </div>
