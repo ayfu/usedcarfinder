@@ -5,6 +5,7 @@ from collections import OrderedDict
 import re
 from collections import defaultdict
 import pickle
+import datetime
 
 from flask import Flask, request, session, g, redirect, url_for, \
                   abort, render_template, flash, make_response
@@ -240,7 +241,8 @@ def carcheck():
                 elif year2:
                     data['year'] += [int(year2.group(0))]
                 else:
-                    data['year'] += [np.nan]
+                    reason = 'No reported year'
+                    return render_template("invalid.html", reason = reason)
 
                 # Different Cars - scrape 'extra' feature from title
 
@@ -618,9 +620,11 @@ def carcheck():
                 try:
                     data['year'] += [int(year.group(0))]
                 except:
-                    data['year'] += [np.nan]
+                    reason = 'No reported year'
+                    return render_template("invalid.html", reason = reason)
             else:
-                data['year'] += [np.nan]
+                reason = 'No reported year'
+                return render_template("invalid.html", reason = reason)
 
             # Add condition
             condition = soup2.find('h1',
@@ -736,8 +740,12 @@ def carcheck():
                         df.loc[pd.isnull(df[col]), col] = 4
                         testdf.loc[pd.isnull(testdf[col]), col] = 4
                     elif col == 'odometer':
-                        df.loc[pd.isnull(df[col]), col] = 20000
-                        testdf.loc[pd.isnull(testdf[col]), col] = 20000
+                        # From federal highway admin on avg number of miles/year
+                        now_year = int(datetime.datetime.now().year)
+                        df.loc[pd.isnull(df[col]), col] = \
+                               13476*(now_year - data['year'][0])
+                        testdf.loc[pd.isnull(testdf[col]), col] = \
+                               13476*(now_year - data['year'][0])
                     elif col == 'extra':
                         df.loc[pd.isnull(df[col]), col] = 'unknown'
                         testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
