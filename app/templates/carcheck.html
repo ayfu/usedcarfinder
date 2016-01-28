@@ -72,8 +72,8 @@
 
 
              <!-- <div class="table-height"> -->
-             <p></p>
-            <div style = "margin-top:22%">
+             <!-- <p></p> -->
+            <div style = "margin-top:20%">
             <table border="0" style="width:50%;" class='center-table consistent-font'>
             <!-- <table border="5" class='table-height'>     -->
               <tr style="font-weight:bold">
@@ -88,10 +88,10 @@
                 <td>{{entries['model']}}</td>
                 <td>{{entries['year']}}</td>
                 <td>{{entries['odometer']}}</td>
-                <td>{{entries['price']}}</td>
-                <td>{{entries['prediction']}}</td>
+                <td>{{entries['price'][:-2]}}</td>
+                <td>{{entries['prediction'][:-2]}}</td>
                 <!-- <td {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td> -->
-                <td style = "color:{{color}}">{{entries['deal']}}</td>
+                <td style = "color:{{color}}">{{entries['deal'][:-2]}}</td>
               </tr>
 
           </table>
@@ -128,9 +128,9 @@
                   <td>{{df['model']}}</td>
                   <td>{{df['year']}}</td>
                   <td>{{df['odometer']}}</td>
-                  <td>{{df['price']}}</td>
-                  <td>{{df['prediction']}}</td>
-                  <td style="color:#72B095">{{df['deal']}}</td>
+                  <td>{{df['price'][:-2]}}</td>
+                  <td>{{df['prediction'][:-2]}}</td>
+                  <td style="color:#72B095">{{df['deal'][:-2]}}</td>
                   <td><a href = {{df['url']}} style="color:blue;">link</a></td>
               </tr>
               {% endfor %}
