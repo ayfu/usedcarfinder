@@ -743,9 +743,9 @@ def carcheck():
                         # From federal highway admin on avg number of miles/year
                         now_year = int(datetime.datetime.now().year)
                         df.loc[pd.isnull(df[col]), col] = \
-                               13476*(now_year - data['year'][0])
+                               13476*(now_year - data['year'][0])*2
                         testdf.loc[pd.isnull(testdf[col]), col] = \
-                               13476*(now_year - data['year'][0])
+                               13476*(now_year - data['year'][0])*2
                     elif col == 'extra':
                         df.loc[pd.isnull(df[col]), col] = 'unknown'
                         testdf.loc[pd.isnull(testdf[col]), col] = 'unknown'
