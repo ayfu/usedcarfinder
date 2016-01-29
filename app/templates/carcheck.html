@@ -42,17 +42,17 @@
         <div class="cover-container">
           <div class="masthead clearfix">
             <div class="inner">
-              <h3 class="masthead-brand">
+              <h3 class="masthead-brand font-head">
                 <a href="{{ url_for('index') }}">Used Car Price Authority</a></h3>
               <nav>
                 <ul class="nav masthead-nav">
                   <!-- <li><a href="{{ url_for('carcheck') }}">Check Car</a></li> -->
-                  <li class="active"><a href="{{ url_for('index') }}"><i class="fa fa-home fa-lg"></i></a></li>
+                  <li class="active"><a href="{{ url_for('index') }}"><i class="fa fa-home fa-2x"></i></a></li>
 
-                  <li><a href="https://github.com/ayfu/">
-                    <i class="fa fa-github fa-lg"></i></a></li>
+                  <li><a href="https://github.com/ayfu/usedcarfinder">
+                    <i class="fa fa-github fa-2x"></i></a></li>
                   <li><a href="https://www.linkedin.com/in/afu01">
-                    <i class="fa fa-linkedin fa-lg"></i></a></li>
+                    <i class="fa fa-linkedin fa-2x"></i></a></li>
 
                 </ul>
               </nav>
@@ -60,22 +60,20 @@
           </div>
 
           <div class="inner">
-              <p><br><br><br><br></p>
+              <p><br><br><br></p>
                <!-- <h2 class="cover-heading"><div {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{suggestion}}</div></h2> -->
                <!-- <p><div {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>This deal is in the top {{dealquality}}% of deals analyzed for {{site}}</div></p> -->
 
               <!-- <p></p> -->
               <!-- PLOT -->
+              <p><i class="fa fa-car fa-2x" style="color:{{color}}"></i><font style="color:{{color}}; font-size: 150%; font-family: "Trebuchet MS", Verdana, sans-serif;"> : {{suggestion2}} {{pct}} {{suggestion1}}</font></p>
               <div class="center-table" style="width:70%">
                 <div id="plot"></div>
               </div>
 
 
-             <!-- <div class="table-height"> -->
-             <!-- <p></p> -->
-            <div style = "margin-top:20%">
-            <table border="0" style="width:50%;" class='center-table consistent-font'>
-            <!-- <table border="5" class='table-height'>     -->
+            <div style = "margin-top:17%">
+             <table border="0" style="width:50%;" class='center-table consistent-font'>
               <tr style="font-weight:bold">
                 <td>Model</td>
                 <td>Year</td>
@@ -88,8 +86,8 @@
                 <td>{{entries['model']}}</td>
                 <td>{{entries['year']}}</td>
                 <td>{{entries['odometer']}}</td>
-                <td>{{entries['price'][:-2]}}</td>
-                <td>{{entries['prediction'][:-2]}}</td>
+                <td>{{entries['price']}}</td>
+                <td>{{entries['prediction']}}</td>
                 <!-- <td {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td> -->
                 <td style = "color:{{color}}">{{entries['deal'][:-2]}}</td>
               </tr>
@@ -97,16 +95,19 @@
           </table>
          </div>
          <!-- </div> -->
-          <p><br></p>
+         <p></p>
+         <button class = "btntbl consistent-font">Recommended <i class="fa fa-car"></i></button>
+          <p><br><br></p>
+
           <form align="center" action="/carcheck" method="POST">
               <!-- width style also taken care of in cover.css file for the "input[type=text]" section" -->
-             <input type="text" name="urlcall" style="width: 50%;" value={{url}}>
-             <button type="submit" class="btn btn-lg btn-default">Submit</button>
+             <input type="text" class = "consistent-font" name="urlcall" style="width: 50%;" value={{url}}>
+             <button type="submit" class="btn btn-lg btn-default"><i class="fa fa-search"></i></button>
              <!-- <p class="body"><font size = "2">Car Choices: Honda Civic, Toyota Corolla, Ford Focus, Chevy Cruze, Hyundai Elantra, Mazda 3, Kia Forte </font></p> -->
 
              <!-- <input type="submit" name="my-form" > -->
          </form>
-          <button class = "btntbl consistent-font">Click here for recommended cars</button>
+
           <!-- <div class="center-table" style="width:80%"> -->
           <!-- <table id="table_id" class="display" border = "0"> -->
           <p><br></p>
@@ -128,9 +129,9 @@
                   <td>{{df['model']}}</td>
                   <td>{{df['year']}}</td>
                   <td>{{df['odometer']}}</td>
-                  <td>{{df['price'][:-2]}}</td>
-                  <td>{{df['prediction'][:-2]}}</td>
-                  <td style="color:#72B095">{{df['deal'][:-2]}}</td>
+                  <td>{{df['price']}}</td>
+                  <td>{{df['prediction']}}</td>
+                  <td style="color:#72B095">{{df['deal']}}</td>
                   <td><a href = {{df['url']}} style="color:blue;">link</a></td>
               </tr>
               {% endfor %}
@@ -171,13 +172,52 @@
     <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
 
     <script language="javascript">
+    (function (H) {
+        function symbolWrap(proceed, symbol, x, y, w, h, options) {
+            if (symbol.indexOf('text:') === 0) {
+                var text = symbol.split(':')[1],
+                    svgElem = this.text(text, x, y + h)
+                    .css({
+                        fontFamily: 'FontAwesome',
+                        fontSize: h * 2
+                    });
+
+                if (svgElem.renderer.isVML) {
+                    svgElem.fillSetter = function (value, key, element) {
+                        element.style.color = H.Color(value).get('rgb');
+                    };
+                }
+                return svgElem;
+            }
+            return proceed.apply(this, [].slice.call(arguments, 1));
+        }
+        H.wrap(H.SVGRenderer.prototype, 'symbol', symbolWrap);
+        if (H.VMLRenderer) {
+            H.wrap(H.VMLRenderer.prototype, 'symbol', symbolWrap);
+        }
+
+        // Load the font for SVG files also
+        H.wrap(H.Chart.prototype, 'getSVG', function (proceed) {
+            var svg = proceed.call(this);
+            svg = '<?xml-stylesheet type="text/css" ' +
+                'href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" ?>' +
+                svg;
+            return svg;
+        });
+    }(Highcharts));
+
     $(function () {
+        Highcharts.setOptions({
+    		lang: {
+    			thousandsSep: ','
+    		}
+       });
     $('#plot').highcharts({
         chart: {
             type: 'bar'
         },
         title: {
-            text: '{{suggestion}}',
+            text: '',
             style: {
                 color: "{{color}}",
                 fontSize: "25px",
@@ -253,7 +293,6 @@
               itemHiddenStyle: {
                  color: '#444'
               }
-
         }
        });
     });

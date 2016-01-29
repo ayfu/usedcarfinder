@@ -210,7 +210,7 @@ input[type=text] {
   .masthead {
     position: fixed;
     top: 0;
-    background-color: #000000;
+    background-color: #34495E;
     opacity: 0.9;
   }
   .mastfoot {
@@ -243,10 +243,14 @@ input[type=text] {
   }
 }
 
-.consistent-font
-{
+.consistent-font{
     font-size: large;
     color: ##333333;
+    font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+
+.font-head{
+    font-size: 170%;
     font-family: "Trebuchet MS", Verdana, sans-serif;
 }
 

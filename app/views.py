@@ -136,6 +136,9 @@ def carcheck():
                    }
             try:
                 html = requests.get(url)
+                if html == None:
+                    reason = 'Bad URL'
+                    return render_template("invalid.html", reason = reason)
             except:
                 reason = 'Bad URL'
                 return render_template("invalid.html", reason = reason)
@@ -164,6 +167,9 @@ def carcheck():
             except:
                 reason = 'Bad URL'
                 return render_template("invalid.html", reason = reason)
+        else:
+            reason = 'Bad URL'
+            return render_template("invalid.html", reason = reason)
 
         if site == 'craigslist':
             soup = BeautifulSoup(html.text, 'lxml')
@@ -878,20 +884,25 @@ def carcheck():
 
         # Calculate if this is a deal
         deal = pred[0] - price
+        pct = str(round(abs(float(deal)/price*100),1))+"%"
+        print 'percent:', pct
         deal = round(deal, 0)
         deal_compare = deal
 
         gooddeal = 0
         color_text = "#C11B17"
         if price_check == 1:
-            suggestion = 'NO LISTED PRICE! RUN AWAY FROM THIS SNEAKY PERSON'
+            reason = 'NO LISTED PRICE!'
+            return render_template("invalid.html", reason = reason)
         elif deal > 0:
-            suggestion = 'GOOD DEAL'
+            suggestion1 = 'Savings'
+            suggestion2 = ''
             gooddeal = 1 # Used to toggle Green on web page for good deal
             deal = '$' + str(deal)
             color_text = "#72B095"
         else:
-            suggestion = 'BAD DEAL'
+            suggestion1 = ''
+            suggestion2 = 'Overpaying by'
             gooddeal = 0 # Used to toggle Red on web page for bad deal
             deal = str(deal).split('-')
             deal[0] = '-'
@@ -913,10 +924,10 @@ def carcheck():
         # Convert df_temp to a dictionary to loop through for webpage
         entries = dict(model = model,
                        deal = deal,
-                       price = '$'+str(price),
-                       prediction = '$'+str(pred),
+                       price = "${:,.0f}".format(price),
+                       prediction = "${:,.0f}".format(pred),
                        year = year,
-                       odometer = odometer)
+                       odometer = "{:,.0f}".format(odometer))
 
         ########################################################################
         # Get Recommendations for Cars
@@ -965,11 +976,11 @@ def carcheck():
 
         # Format results for HTML
         rec = [dict(model = df_result['model'][row],
-               deal = '$'+str(round(df_result['deal'][row], 0)),
-               price = '$'+str(round(df_result['price'][row], 0)),
-               prediction = '$'+str(round(df_result['pred'][row], 0)),
+               deal = "${:,.0f}".format(df_result['deal'][row]),
+               price = "${:,.0f}".format(df_result['price'][row]),
+               prediction = "${:,.0f}".format(df_result['pred'][row]),
                year = df_result['year'][row],
-               odometer = df_result['odometer'][row],
+               odometer = "{:,.0f}".format(df_result['odometer'][row]),
                url = df_result['url'][row]) \
                for row in range(df_result.shape[0])]
 
@@ -983,25 +994,25 @@ def carcheck():
         """
         # print suggestion, gooddeal
         # print gooddeal == 1
-        print 'max min'
-        print max_num, min_num
-        print price, pred
+        print "${:,.0f}".format(df_result['pred'][0])
         if site == 'craigslist':
             html = render_template("carcheck.html", entries = entries,
-                                   url = url, suggestion = suggestion,
-                                   rec = rec, gooddeal = gooddeal,
+                                   url = url, suggestion1 = suggestion1,
+                                   suggestion2 = suggestion2, rec = rec,
+                                   gooddeal = gooddeal,
                                    dealquality = dealquality, site = site,
                                    price = price_num, pred = pred_num,
                                    max_num = max_num, min_num = min_num,
-                                   color = color_text)
+                                   color = color_text, pct = pct)
         else:
             html = render_template("carcheck.html", entries = entries,
-                                   url = url, suggestion = suggestion,
-                                   rec = rec, gooddeal = gooddeal,
+                                   url = url, suggestion1 = suggestion1,
+                                   suggestion2 = suggestion2, rec = rec,
+                                   gooddeal = gooddeal,
                                    dealquality = dealquality, site = site,
                                    price = price_num, pred = pred_num,
                                    max_num = max_num, min_num = min_num,
-                                   color = color_text)
+                                   color = color_text, pct = pct)
 
     else:
         # It will be a get request instead
