@@ -126,7 +126,7 @@ class Encode():
                 self.df = self.df[self.df['condition'] != 'salvage']
 
                 # Filter ridiculous prices
-                self.df = self.df[self.df['price'] > 1000]
+                self.df = self.df[(self.df['price'] > 1000) & (self.df['price'] < 80000) ]
 
             # Autotrader df
             else:
