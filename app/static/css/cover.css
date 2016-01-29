@@ -96,7 +96,7 @@ input[type=text] {
   width: 100%;
   height: 100%; /* For at least Firefox */
   min-height: 100%;
-  background-image: url(../img/used_car3.jpg);
+  background-image: url(../img/used_car6.jpg);
   /*-webkit-box-shadow: inset 0 0 100px rgba(0,0,0,.5);
           box-shadow: inset 0 0 100px rgba(0,0,0,.5);*/
   -webkit-background-size: cover;
@@ -216,7 +216,7 @@ input[type=text] {
     position: fixed;
     top: 0;
     background-color: #34495E;
-    opacity: 1;
+    opacity: 0.8;
   }
   .mastfoot {
     position: fixed;

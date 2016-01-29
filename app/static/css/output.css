@@ -211,7 +211,7 @@ input[type=text] {
     position: absolute;;
     top: 0;
     background-color: #34495E;
-    opacity: 1;
+    opacity: 0.8;
   }
   .mastfoot {
     position: fixed;

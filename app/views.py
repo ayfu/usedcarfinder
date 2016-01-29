@@ -890,7 +890,7 @@ def carcheck():
         deal_compare = deal
 
         gooddeal = 0
-        color_text = "#C11B17"
+        color_text = "#F78181"
         if price_check == 1:
             reason = 'NO LISTED PRICE!'
             return render_template("invalid.html", reason = reason)
@@ -907,7 +907,9 @@ def carcheck():
             deal = str(deal).split('-')
             deal[0] = '-'
             deal = '$'.join(deal)
-            color_text = "#D94639"
+            # color_text = "#D94639"
+            # color_text = "#F78181"
+            color_text = "#8A0808"
 
         price = round(price, 0)
         pred = round(pred[0], 0)

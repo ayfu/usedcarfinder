@@ -6,6 +6,7 @@ notebooks/
 *.pptx
 *.pyc
 *.pickle
+*.psd
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
