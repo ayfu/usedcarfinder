@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Used Car Genie</title>
+    <title>DealWheels</title>
 
     <link rel="stylesheet" href="/static/css/font-awesome.css">
 
@@ -43,7 +43,7 @@
           <div class="masthead clearfix">
             <div class="inner">
               <h3 class="masthead-brand font-head">
-                <a href="{{ url_for('index') }}"><i class="fa fa-car"></i> Used Car Genie</a></h3>
+                <a href="{{ url_for('index') }}"><i class="fa fa-car"></i> DealWheels</a></h3>
               <nav>
                 <ul class="nav masthead-nav">
                   <!-- <li><a href="{{ url_for('carcheck') }}">Check Car</a></li> -->
@@ -79,11 +79,11 @@
                 <td>Year</td>
                 <td>Mileage</td>
                 <td>Listed Price</td>
-                <td>The Genie Price</td>
+                <td>DealWheels Price</td>
                 <td>Savings</td>
              </tr>
               <tr>
-                <td>{{entries['model']}}</td>
+                <td>{{entries['model'].title()}}</td>
                 <td>{{entries['year']}}</td>
                 <td>{{entries['odometer']}}</td>
                 <td>{{entries['price']}}</td>
@@ -96,7 +96,7 @@
          </div>
          <!-- </div> -->
          <p><br></p>
-         <button class = "btntbl consistent-font">See other <i class="fa fa-car"></i></button>
+         <button class = "btntbl consistent-font">See other <i class="fa fa-car"></i> deals</button>
           <p><br></p>
 
           <form align="center" action="/carcheck" method="POST">
@@ -118,7 +118,7 @@
                   <td>Year</td>
                   <td>Mileage</td>
                   <td>Listed Price</td>
-                  <td>The Authority Price</td>
+                  <td>DealWheels Price</td>
                   <td>Savings</td>
                   <td>Link</td>
               </tr>
@@ -126,7 +126,7 @@
           <!-- <tbody class = "expandtbl1"> -->
               {% for df in rec %}
               <tr>
-                  <td>{{df['model']}}</td>
+                  <td>{{df['model'].title()}}</td>
                   <td>{{df['year']}}</td>
                   <td>{{df['odometer']}}</td>
                   <td>{{df['price']}}</td>
@@ -282,7 +282,7 @@
             data: [{{price}}],
             color: "{{color}}"
         }, {
-            name: 'The Genie Price',
+            name: 'DealWheels Price',
             data: [{{pred}}],
             color: "#616161"
         }],
