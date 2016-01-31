@@ -173,7 +173,8 @@ class Model():
 
         # Run through CV
         self.rmse_cv = []
-        self.results = {'pred': [],
+        self.results = {'url': [],
+                        'pred': [],
                         'real': []}
 
         for train, test in cv:
@@ -182,6 +183,7 @@ class Model():
             error = mean_squared_error(pred, self.y_train[test])**0.5
             self.results['pred'] += list(pred)
             self.results['real'] += list(self.y_train[test])
+            self.results['url'] += list(self.url_train[test])
             self.rmse_cv += [error]
         print 'RMSE Scores:', self.rmse_cv
         print 'Mean RMSE:', np.mean(self.rmse_cv)
