@@ -910,8 +910,8 @@ def carcheck():
             suggestion2 = 'Overpaying by'
             gooddeal = 0 # Used to toggle Red on web page for bad deal
             deal = str(deal).split('-')
-            deal[0] = '-'
-            deal = '$'.join(deal)
+            #deal[0] = '-'
+            deal = '$' + deal[1]
             # color_text = "#D94639"
             # color_text = "#F78181"
             color_text = "#8A0808"
