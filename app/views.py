@@ -174,6 +174,9 @@ def carcheck():
         if site == 'craigslist':
             soup = BeautifulSoup(html.text, 'lxml')
             dat = soup.findAll('p', attrs={'class':"attrgroup"})
+            if len(dat) < 1:
+                reason = 'Bad URL'
+                return render_template("invalid.html", reason = reason)
 
             # Take care of price, time, and date first
             # try statement for one anomolous page for Mazda 3
