@@ -66,13 +66,13 @@
 
               <!-- <p></p> -->
               <!-- PLOT -->
-              <p><i class="fa fa-car fa-2x" style="color:{{color}}"></i><font style="color:{{color}}; font-size: 150%; font-family: "Trebuchet MS", Verdana, sans-serif;"> &nbsp;&nbsp;{{suggestion2}} {{pct}} {{suggestion1}}</font></p>
+              <p><i class="fa fa-car fa-2x" style="color:{{color}}"></i><font style="color:{{color}}; font-size: 150%; font-family: "Trebuchet MS", Verdana, sans-serif;"> &nbsp;&nbsp;{{suggestion}}: {{suggestion2}} {{entries['deal'][:-2]}} {{suggestion1}}</font></p>
               <div class="center-table" style="width:70%">
                 <div id="plot"></div>
               </div>
 
 
-            <div style = "margin-top:20%">
+            <!-- <div style = "margin-top:20%">
              <table border="0" style="width:50%;" class='center-table consistent-font'>
               <tr style="font-weight:bold">
                 <td>Model</td>
@@ -88,16 +88,19 @@
                 <td>{{entries['odometer']}}</td>
                 <td>{{entries['price']}}</td>
                 <td>{{entries['prediction']}}</td>
-                <!-- <td {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td> -->
                 <td style = "color:{{color}}">{{entries['deal'][:-2]}}</td>
               </tr>
 
           </table>
-         </div>
+         </div> -->
+
+         <!-- <td {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td> -->
          <!-- </div> -->
+         <div style = "margin-top:20%">
          <p><br></p>
          <button class = "btntbl consistent-font">See other <i class="fa fa-car"></i> deals</button>
           <p><br></p>
+      </div>
 
           <form align="center" action="/carcheck" method="POST">
               <!-- width style also taken care of in cover.css file for the "input[type=text]" section" -->
@@ -255,7 +258,7 @@
               },
             // max: {{max_num}},
             // min: {{min_num}},
-            max: 30000,
+            max: {{max_num}},
             min: 0,
             lineWidth: 0,
             gridLineWidth: 0,
@@ -295,21 +298,52 @@
               itemHiddenStyle: {
                  color: '#444'
               }
-        }
-       });
+           }
+        },function (chart) { // on complete
+
+            chart.renderer.text("Model: {{entries['model'].title()}}", 600, 45)
+                .attr({
+                    rotation: 0
+                })
+                .css({
+                    color: "#616161",
+                    fontSize: '20px'
+                })
+                .add();
+            chart.renderer.text("Year: {{entries['year']}}", 600, 80)
+                .attr({
+                    rotation: 0
+                })
+                .css({
+                    color: "#616161",
+                    fontSize: '20px'
+                })
+                .add();
+            chart.renderer.text("Mileage: {{entries['odometer']}}", 600, 115)
+                .attr({
+                    rotation: 0
+                })
+                .css({
+                    color: "#616161",
+                    fontSize: '20px'
+                })
+                .add();
+            chart.renderer.text("% Savings: {{pct}}", 600, 150)
+                .attr({
+                    rotation: 0
+                })
+                .css({
+                    color: "#616161",
+                    fontSize: '20px'
+                })
+                .add();
+
+            }
+
+       );
     });
 
-    // function (chart) { // on complete
-    //
-    //     chart.renderer.text("HELO", 19000, 50)
-    //         .attr({
-    //             rotation: 0
-    //         })
-    //         .css({
-    //             color: "#616161",
-    //             fontSize: '20px'
-    //         })
-    //         .add();}
+
 
 
     </script>

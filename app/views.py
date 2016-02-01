@@ -898,12 +898,14 @@ def carcheck():
             reason = 'NO LISTED PRICE!'
             return render_template("invalid.html", reason = reason)
         elif deal > 0:
+            suggestion = 'Good Deal'
             suggestion1 = 'Savings'
             suggestion2 = ''
             gooddeal = 1 # Used to toggle Green on web page for good deal
             deal = '$' + str(deal)
             color_text = "#72B095"
         else:
+            suggestion = 'Bad Deal'
             suggestion1 = ''
             suggestion2 = 'Overpaying by'
             gooddeal = 0 # Used to toggle Red on web page for bad deal
@@ -923,8 +925,9 @@ def carcheck():
         # Set numbers to make for Highcharts graph
         price_num = price
         pred_num = pred
-        max_num = round(max(price_num, pred_num)*1.05, 0)
+        max_num = round(max(price_num, pred_num)*1.8, 0)
         min_num = round(min(price_num, pred_num)*0.95, 0)
+
 
         # Convert df_temp to a dictionary to loop through for webpage
         entries = dict(model = model,
@@ -1008,7 +1011,8 @@ def carcheck():
                                    dealquality = dealquality, site = site,
                                    price = price_num, pred = pred_num,
                                    max_num = max_num, min_num = min_num,
-                                   color = color_text, pct = pct)
+                                   color = color_text, pct = pct,
+                                   suggestion = suggestion)
         else:
             html = render_template("carcheck.html", entries = entries,
                                    url = url, suggestion1 = suggestion1,
@@ -1017,7 +1021,8 @@ def carcheck():
                                    dealquality = dealquality, site = site,
                                    price = price_num, pred = pred_num,
                                    max_num = max_num, min_num = min_num,
-                                   color = color_text, pct = pct)
+                                   color = color_text, pct = pct,
+                                   suggestion = suggestion)
 
     else:
         # It will be a get request instead
