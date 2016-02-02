@@ -89,7 +89,7 @@ def close_connection(exception):
 @app.route('/home', methods = ['GET', 'POST'])
 def index():
     user = '' # fake user
-    url = "http://sfbay.craigslist.org/pen/ctd/5413262011.html"
+    url = "http://sfbay.craigslist.org/sfc/ctd/5429829895.html"
     return render_template("index.html",
                             title = 'Home',
                             user = user,
