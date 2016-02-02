@@ -271,8 +271,9 @@
                     align: 'right',
                     color: '#FFFFFF',
                     x: -10,
+                    format: '${y:,.0f}',
                     style: {
-                        fontSize:'15px'
+                        fontSize:'20px'
                     }
                 },
                 // pointPadding: 0.1,
@@ -281,13 +282,13 @@
 
         },
         series: [{
-            name: 'Listed Price',
+            name: 'Listed Price on {{site.title()}}',
             data: [{{price}}],
             color: "{{color}}"
         }, {
             name: 'DealWheels Price',
             data: [{{pred}}],
-            color: "#616161"
+            color: "#586879"
         }],
         legend: {
               itemStyle: {
@@ -301,7 +302,7 @@
            }
         },function (chart) { // on complete
 
-            chart.renderer.text("Model: {{entries['model'].title()}}", 600, 45)
+            chart.renderer.text("Model: {{entries['model'].title()}}", 600, 50)
                 .attr({
                     rotation: 0
                 })
@@ -310,7 +311,7 @@
                     fontSize: '20px'
                 })
                 .add();
-            chart.renderer.text("Year: {{entries['year']}}", 600, 80)
+            chart.renderer.text("Year: {{entries['year']}}", 600, 85)
                 .attr({
                     rotation: 0
                 })
@@ -319,7 +320,7 @@
                     fontSize: '20px'
                 })
                 .add();
-            chart.renderer.text("Mileage: {{entries['odometer']}}", 600, 115)
+            chart.renderer.text("Mileage: {{entries['odometer']}}", 600, 120)
                 .attr({
                     rotation: 0
                 })
@@ -328,7 +329,7 @@
                     fontSize: '20px'
                 })
                 .add();
-            chart.renderer.text("% Savings: {{pct}}", 600, 150)
+            chart.renderer.text("% Savings: {{pct}}", 600, 155)
                 .attr({
                     rotation: 0
                 })
