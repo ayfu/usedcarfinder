@@ -67,6 +67,23 @@
               <!-- <p></p> -->
               <!-- PLOT -->
               <p><i class="fa fa-car fa-2x" style="color:{{color}}"></i><font style="color:{{color}}; font-size: 150%; font-family: "Trebuchet MS", Verdana, sans-serif;"> &nbsp;&nbsp;{{suggestion}}: {{suggestion2}} {{entries['deal'][:-2]}} {{suggestion1}}</font></p>
+              <!-- <div style = "margin-top:20%"> -->
+               <table border="0" style="width:30%;" class='center-table consistent-font'>
+                <tr style="font-weight:bold">
+                  <td>Model</td>
+                  <td>Year</td>
+                  <td>Mileage</td>
+                  <td>Percent Savings</td>
+               </tr>
+                <tr>
+                  <td>{{entries['model'].title()}}</td>
+                  <td>{{entries['year']}}</td>
+                  <td>{{entries['odometer']}}</td>
+                  <td style = "color:{{color}}">{{pct}}</td>
+                </tr>
+            </table>
+           <!-- </div> -->
+
               <div class="center-table" style="width:70%">
                 <div id="plot"></div>
               </div>
@@ -96,7 +113,7 @@
 
          <!-- <td {%if gooddeal == 1%}style="color:#347C2C"{% else %}class="baddeal"{% endif %}>{{entries['deal']}}</td> -->
          <!-- </div> -->
-         <div style = "margin-top:20%">
+         <div style = "margin-top:22%">
          <p><br></p>
          <button class = "btntbl consistent-font">See other <i class="fa fa-car"></i> deals</button>
           <p><br></p>
@@ -300,50 +317,51 @@
                  color: '#444'
               }
            }
-        },function (chart) { // on complete
-
-            chart.renderer.text("Model: {{entries['model'].title()}}", 600, 50)
-                .attr({
-                    rotation: 0
-                })
-                .css({
-                    color: "#616161",
-                    fontSize: '20px'
-                })
-                .add();
-            chart.renderer.text("Year: {{entries['year']}}", 600, 85)
-                .attr({
-                    rotation: 0
-                })
-                .css({
-                    color: "#616161",
-                    fontSize: '20px'
-                })
-                .add();
-            chart.renderer.text("Mileage: {{entries['odometer']}}", 600, 120)
-                .attr({
-                    rotation: 0
-                })
-                .css({
-                    color: "#616161",
-                    fontSize: '20px'
-                })
-                .add();
-            chart.renderer.text("% Savings: {{pct}}", 600, 155)
-                .attr({
-                    rotation: 0
-                })
-                .css({
-                    color: "#616161",
-                    fontSize: '20px'
-                })
-                .add();
-
-            }
+        }
 
        );
     });
 
+    // function (chart) { // on complete
+    //
+    //     chart.renderer.text("Model: {{entries['model'].title()}}", 700, 50)
+    //         .attr({
+    //             rotation: 0
+    //         })
+    //         .css({
+    //             color: "#616161",
+    //             fontSize: '20px'
+    //         })
+    //         .add();
+    //     chart.renderer.text("Year: {{entries['year']}}", 700, 85)
+    //         .attr({
+    //             rotation: 0
+    //         })
+    //         .css({
+    //             color: "#616161",
+    //             fontSize: '20px'
+    //         })
+    //         .add();
+    //     chart.renderer.text("Mileage: {{entries['odometer']}}", 700, 120)
+    //         .attr({
+    //             rotation: 0
+    //         })
+    //         .css({
+    //             color: "#616161",
+    //             fontSize: '20px'
+    //         })
+    //         .add();
+    //     chart.renderer.text("% Savings: {{pct}}", 700, 220)
+    //         .attr({
+    //             rotation: 0
+    //         })
+    //         .css({
+    //             color: "#616161",
+    //             fontSize: '20px',
+    //         })
+    //         .add();
+    //
+    //     }
 
 
 

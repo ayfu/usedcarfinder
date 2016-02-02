@@ -1,4 +1,3 @@
-import sqlite3
 import os
 from contextlib import closing
 from collections import OrderedDict
@@ -887,7 +886,7 @@ def carcheck():
 
         # Calculate if this is a deal
         deal = pred[0] - price
-        pct = str(round(abs(float(deal)/price*100),1))+"%"
+        pct = str(round(float(deal)/price*100,1))+"%"
         print 'percent:', pct
         deal = round(deal, 0)
         deal_compare = deal
