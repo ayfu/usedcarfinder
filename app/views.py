@@ -227,8 +227,8 @@ def carcheck():
 
             # Making sure we get SOMETHING
             if query == None:
-                reason = 'Did not detect civic, corolla, focus, cruze' +\
-                         ', elantra, forte, or mazda'
+                reason = 'Did not detect Civic, Corolla, Focus, Cruze' +\
+                         ', Elantra, Forte, or Mazda3.'
                 return render_template("invalid.html", reason = reason)
             query = query.group(0).lower()
 
