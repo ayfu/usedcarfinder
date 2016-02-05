@@ -135,24 +135,28 @@
            <!-- <thead> -->
               <tr style="font-weight:bold">
                   <td>Model</td>
+                  <td>Trim</td>
                   <td>Year</td>
                   <td>Mileage</td>
+                  <td>Condition</td>
                   <td>Listed Price</td>
                   <td>DealWheels Price</td>
                   <td>Savings</td>
-                  <td>Link</td>
+                  <!-- <td>Link</td> -->
               </tr>
           <!-- </thead> -->
           <!-- <tbody class = "expandtbl1"> -->
               {% for df in rec %}
               <tr>
                   <td>{{df['model'].title()}}</td>
+                  <td>{{df['trim']}}</td>
                   <td>{{df['year']}}</td>
                   <td>{{df['odometer']}}</td>
+                  <td>{{df['condition']}}</td>
                   <td>{{df['price']}}</td>
                   <td>{{df['prediction']}}</td>
                   <td style="color:#72B095">{{df['deal']}}</td>
-                  <td><a href = {{df['url']}} style="color:blue;">link</a></td>
+                  <!-- <td><a href = {{df['url']}} style="color:blue;">link</a></td> -->
               </tr>
               {% endfor %}
          <!-- </tbody> -->

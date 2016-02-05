@@ -988,7 +988,9 @@ def carcheck():
                prediction = "${:,.0f}".format(df_result['pred'][row]),
                year = df_result['year'][row],
                odometer = "{:,.0f}".format(df_result['odometer'][row]),
-               url = df_result['url'][row]) \
+               url = df_result['url'][row],
+               trim = df_result['extra'][row],
+               condition = df_result['condition'][row])\
                for row in range(df_result.shape[0])]
 
         """
