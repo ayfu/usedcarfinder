@@ -101,16 +101,16 @@ def index():
 
 @app.route('/carcheck', methods = ['GET', 'POST'])
 def carcheck():
+    """
+    Real-time scraping of a listing on craigslist or autotrader.
 
-    #ALL = request.args.get('ALL')
-    # Monitor if url is good
+    If some features are bad or missing or bad url, will send to invalid page.
+
+    Calls SQL database and then uses a pickle'd model to predict the price
+
+    Returns: a template for the output page.
+    """
     bad_url = 0
-
-    ####
-    # FIX THIS NONSENSE WITH SITE = CRAIGSLIST
-
-    ####
-
 
     if request.method == 'POST':
         urlcall = request.form['urlcall']
@@ -809,7 +809,7 @@ def carcheck():
 
 
 
-
+        # Choose columns for encoding purposes
         if site == 'craigslist':
             columns = ['color', 'condition', 'drive', 'extra', 'fuel', 'model',
                        'odometer', 'title_stat', 'transmission', 'type']
@@ -859,6 +859,7 @@ def carcheck():
         testdf = testdf.drop(['price'], axis = 1)
         testdf['price'] = price2
 
+        # Outputs to tell state of system
         print 'input data:'
 
         print testdf
@@ -911,8 +912,7 @@ def carcheck():
             deal = str(deal).split('-')
             #deal[0] = '-'
             deal = '$' + deal[1]
-            # color_text = "#D94639"
-            # color_text = "#F78181"
+            # color_text = "#D94639" # color_text = "#F78181"
             color_text = "#8A0808"
 
         price = round(price, 0)
@@ -973,12 +973,8 @@ def carcheck():
                     df_result = df_result[(df_result['deal'] > deal_compare) & \
                                           (df_result['deal'] < 7000) & \
                                           (df_result['deal'] > 100)]
+        # Return df_result in a nice format for a dataframe
         df_result = df_result.sort_values('deal', axis = 0, ascending = False)
-
-        # If many results, get top 3 results
-        #if df_result.shape[0] > 9:
-        #    df_result = df_result.iloc[:10, :]
-
         df_result = df_result.reset_index().drop('index', axis = 1)
 
         # Format results for HTML
