@@ -30,6 +30,7 @@ from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.metrics import make_scorer, mean_squared_error
 
 from encode import *
+from kmeans import *
 
 
 '''

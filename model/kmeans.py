@@ -114,5 +114,5 @@ def add_cluster(df, columns, params_km):
     columns.append('url')
     columns.remove('price')
     columns.append('price')
-    bigdf = bigdf[columns]
+    df = df[columns]
     return df
