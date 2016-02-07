@@ -2,7 +2,7 @@
 
 __file__
 
-    autotrader_compact.py
+    encode.py
 
 __description__
 
