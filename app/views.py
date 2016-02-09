@@ -23,6 +23,14 @@ from app import app
 # SET TRANSFORM_CUTOFF to 0
 TRANSFORM_CUTOFF = 0
 
+# Load pickle files first
+filename_cg = 'model/cg_model.pickle'
+filename_at = 'model/at_model.pickle'
+with open(filename_cg,'r') as f:
+    mdl_cg = pickle.load(f)
+with open(filename_at, 'r') as f:
+    mdl_at = pickle.load(f)
+
 
 class dbConnect():
     '''
@@ -870,16 +878,19 @@ def carcheck():
         # BRING IN TRAINED MODEL
         ######################
 
-        # Use pickle to load the model trained earlier
+        # Choose which pickle model to use.
+        # Model was pickle'd at the beginning of the file
         # Model is site dependent
         if site == 'craigslist':
-            filename = 'model/cg_model.pickle'
+            #filename = 'model/cg_model.pickle'
+            mdl = mdl_cg
         else:
-            filename = 'model/at_model.pickle'
+            #filename = 'model/at_model.pickle'
+            mdl = mdl_at
 
         X = testdf.as_matrix(testdf.columns[:-1])
-        with open(filename,'r') as f:
-            mdl = pickle.load(f)
+        #with open(filename,'r') as f:
+            #mdl = pickle.load(f)
         pred = mdl.predict(X)
         price = testdf['price'][0]
         print 'predicted price', pred[0]
