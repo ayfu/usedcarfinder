@@ -1010,7 +1010,8 @@ def carcheck():
         """
         # print suggestion, gooddeal
         # print gooddeal == 1
-        print "${:,.0f}".format(df_result['pred'][0])
+        if df_result.shape[0] > 0:
+            print "${:,.0f}".format(df_result['pred'][0])
         if site == 'craigslist':
             html = render_template("carcheck.html", entries = entries,
                                    url = url, suggestion1 = suggestion1,
