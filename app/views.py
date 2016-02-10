@@ -97,7 +97,7 @@ def close_connection(exception):
 @app.route('/home', methods = ['GET', 'POST'])
 def index():
     user = '' # fake user
-    url = "http://sfbay.craigslist.org/pen/cto/5408525732.html"
+    url = "http://sfbay.craigslist.org/pen/cto/5404325022.html"
     return render_template("index.html",
                             title = 'Home',
                             user = user,
@@ -685,7 +685,7 @@ def carcheck():
                 if len(trim) > 2:
                     data['type'] += [trim[2]]
                 else:
-                    data['type'] += [np.nan]
+                    data['type'] += ['unknown']
             else:
                 data['extra'] += [np.nan]
                 data['type'] += ['unknown']
