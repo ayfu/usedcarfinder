@@ -688,7 +688,7 @@ def carcheck():
                     data['type'] += [np.nan]
             else:
                 data['extra'] += [np.nan]
-                data['type'] += [np.nan]
+                data['type'] += ['unknown']
 
             # Add odometer
             odometer = soup2.find('span', {'class':"atcui-clear heading-mileage"})
