@@ -471,10 +471,16 @@ class ScrapeCglst():
             #    self.df[col] = self.df[col].dt.time
             elif col == 'odometer':
                 for val in self.df['model'].unique():
-                    mean = np.mean(self.df.loc[(pd.notnull(self.df[col])) \
-                                   & (self.df['model'] == val), col])
-                    self.df.loc[(pd.isnull(self.df[col])) \
-                                & (self.df['model'] == val),col] = mean
+                    years = self.df.loc[self.df['model'] == val,
+                                        'year'].value_counts()
+                    years = years[years > 1].index
+                    for year in years:
+                        mean = np.mean(self.df.loc[(self.df['model'] == val) & \
+                                                    (self.df['year'] == year),
+                                                    'price'])
+                        self.df.loc[(self.df['model'] == val) & \
+                                    (self.df['year'] == year),
+                                    'avg'] = mean
 
 
         df = self.df.copy()
