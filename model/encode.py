@@ -127,7 +127,7 @@ class Encode():
 
                 # Filter ridiculous prices
                 self.df = self.df[(self.df['price'] > 1000) & \
-                                  (self.df['price'] < 80000) ]
+                                  (self.df['price'] < 30000) ]
 
             # Autotrader df
             else:
