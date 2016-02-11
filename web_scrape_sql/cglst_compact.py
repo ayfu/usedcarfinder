@@ -470,9 +470,11 @@ class ScrapeCglst():
             #    self.df[col] = pd.to_datetime(self.df[col])
             #    self.df[col] = self.df[col].dt.time
             elif col == 'odometer':
-                #No null right now, but we can avg over cars with same year
-                #Future reference
-                self.df.loc[pd.isnull(self.df[col]), col] = 0
+                for val in self.df['model'].unique():
+                    mean = np.mean(self.df.loc[(pd.notnull(self.df[col])) \
+                                   & (self.df['model'] == val), col])
+                    self.df.loc[(pd.isnull(self.df[col])) \
+                                & (self.df['model'] == val),col] = mean
 
 
         df = self.df.copy()
