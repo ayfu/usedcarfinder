@@ -476,11 +476,13 @@ class ScrapeCglst():
                     years = years[years > 1].index
                     for year in years:
                         mean = np.mean(self.df.loc[(self.df['model'] == val) & \
-                                                    (self.df['year'] == year),
-                                                    'price'])
+                                                   (self.df['year'] == year) & \
+                                              (pd.notnull(self.df['odometer'])),
+                                                    'odometer'])
                         self.df.loc[(self.df['model'] == val) & \
-                                    (self.df['year'] == year),
-                                    'avg'] = mean
+                                    (self.df['year'] == year) & \
+                                    (pd.isnull(self.df['odometer'])),
+                                    'odometer'] = mean
 
 
         df = self.df.copy()
