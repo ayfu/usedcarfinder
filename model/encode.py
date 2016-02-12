@@ -126,6 +126,10 @@ class Encode():
                 self.df = self.df[self.df['condition'] != 'salvage']
 
                 # Filter ridiculous prices
+                # Max price of MSRP*1.2 (20%)
+                # Min = median price of salvaged car for this class of car
+                # 1000 is exact. std ~ 3000
+                # interquartile range produces ~1000 mean and std of 300
                 self.df = self.df[(self.df['price'] > 1000) & \
                                   (self.df['price'] < 30000) ]
 
