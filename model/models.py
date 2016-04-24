@@ -22,7 +22,7 @@ import pandas as pd
 import numpy as np
 import MySQLdb
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder, MinMaxScaler, scale
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, MinMaxScaler, StandardScaler
 from sklearn.cross_validation import train_test_split
 from sklearn.cross_validation import KFold
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor

@@ -18,7 +18,7 @@ from collections import defaultdict
 import pandas as pd
 import numpy as np
 import MySQLdb
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder, MinMaxScaler, scale
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, MinMaxScaler, StandardScaler
 from sklearn.cross_validation import train_test_split
 
 sys.path.append(os.path.abspath("../web_scrape_sql/"))
