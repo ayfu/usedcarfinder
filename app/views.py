@@ -192,7 +192,11 @@ def carcheck():
 
             def time_convert(x):
                 atimes = x.split(':')
-                return (3600*int(atimes[0])+60*int(atimes[1]))+int(atimes[2])
+                try:
+                    return (3600*int(atimes[0])+60*int(atimes[1]))+ \
+                            int(atimes[2])
+                except:
+                    return 0
             time = time.split(' ')
             data['date'] += [time[0]]
             # Convert time string into datetime and then back to formatted time
