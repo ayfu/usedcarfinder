@@ -97,7 +97,7 @@ def close_connection(exception):
 @app.route('/home', methods = ['GET', 'POST'])
 def index():
     user = '' # fake user
-    url = "http://sfbay.craigslist.org/sby/cto/5547082760.html"
+    url = "http://sfbay.craigslist.org/sby/cto/5600030983.html"
     return render_template("index.html",
                             title = 'Home',
                             user = user,
@@ -1039,7 +1039,7 @@ def carcheck():
 
     else:
         # It will be a get request instead
-        url = "http://sfbay.craigslist.org/sby/cto/5499420507.html"
+        url = "http://sfbay.craigslist.org/sby/cto/5600030983.html"
         html = render_template("carcheckblank.html", url = url)
 
     return html
